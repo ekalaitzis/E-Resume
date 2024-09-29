@@ -1,4 +1,4 @@
-package dev.manos.E_Resume.Documents;
+package dev.manos.E_Resume.Document;
 
 import lombok.AllArgsConstructor;
 import org.apache.tika.exception.TikaException;
