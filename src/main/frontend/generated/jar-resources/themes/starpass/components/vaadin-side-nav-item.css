@@ -1,0 +1,4 @@
+[part="children"] {
+  /* TODO part=children has [hidden] with "display: none !important" in shadow DOM which we want to override (to be able to transition the opening/closing of children) */
+  display: var(--vaadin-side-nav-item-children-display) !important;
+}

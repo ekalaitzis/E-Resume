@@ -1,0 +1,14 @@
+vaadin-app-layout:not([overlay])::part(drawer) {
+    background-color: transparent;
+    border-inline-end: transparent;
+}
+
+vaadin-app-layout:not([overlay])::part(navbar) {
+    background-color: var(--lumo-base-color-60pct);
+    background-image: none;
+    border-bottom-style: solid;
+    border-bottom-width: min(var(--view-inset), var(--view-border-width));
+    border-color: var(--view-border-color);
+    background: var(--view-background);
+    background-clip: var(--view-background-clip);
+}

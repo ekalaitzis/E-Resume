@@ -1,0 +1,11 @@
+:host {
+  justify-content: center;
+  text-align: center;
+}
+
+.vaadin-button-container {
+  /* TODO these (and the above that they inherit) should be in Lumo, so that alignment can be overridden from app styles */
+  justify-content: inherit;
+  text-align: inherit;
+  min-height: auto; /* TODO having the min-height inherit doesn't allow for borders to be used on the host (the height will be incorrect for this element in that case) */
+}

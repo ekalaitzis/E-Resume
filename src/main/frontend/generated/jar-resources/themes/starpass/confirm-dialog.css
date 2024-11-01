@@ -1,0 +1,30 @@
+
+vaadin-confirm-dialog-overlay::part(header),
+vaadin-confirm-dialog-overlay::part(footer) {
+  background: transparent;
+}
+
+vaadin-confirm-dialog-overlay::part(footer) {
+  padding: var(--lumo-space-m);
+}
+
+vaadin-confirm-dialog-overlay h3 {
+  line-height: var(--lumo-line-height-m);
+}
+
+vaadin-confirm-dialog-overlay::part(content) {
+  padding-bottom: var(--lumo-space-s);
+}
+
+vaadin-confirm-dialog-overlay vaadin-button[theme~=tertiary] {
+  padding: var(--vaadin-button-tertiary-padding);
+}
+
+vaadin-confirm-dialog-overlay::part(reject-button) {
+  order: -1;
+  flex-grow: 1;
+}
+
+vaadin-confirm-dialog-overlay::part(cancel-button) {
+  flex-grow: 0;
+}

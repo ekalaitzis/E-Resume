@@ -1,0 +1,4 @@
+vaadin-radio-button {
+  --vaadin-radio-button-background: transparent;
+  --vaadin-input-field-border-color: var(--lumo-contrast-30pct);
+}

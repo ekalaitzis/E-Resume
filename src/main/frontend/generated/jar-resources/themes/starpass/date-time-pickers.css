@@ -1,0 +1,34 @@
+vaadin-date-picker-overlay-content,
+vaadin-date-picker-month-scroller,
+vaadin-date-picker-overlay-content::part(toolbar) {
+  background: transparent;
+}
+
+vaadin-date-picker-year-scroller {
+  background: var(--lumo-shade-10pct);
+}
+
+vaadin-month-calendar::part(date),
+vaadin-month-calendar::part(weekday),
+vaadin-date-picker-year::part(year-number) {
+  font-weight: 480;
+}
+
+vaadin-month-calendar::part(month-header) {
+  font-size: var(--lumo-font-size-m);
+  font-weight: 600;
+}
+
+vaadin-date-time-picker vaadin-date-picker {
+  margin-inline-end: calc(var(--vaadin-input-field-border-width) * -1);
+  position: relative;
+}
+
+vaadin-date-time-picker vaadin-date-picker::after {
+  content: "";
+  position: absolute;
+  height: 100%;
+  width: var(--vaadin-input-field-border-width);
+  background: var(--lumo-base-color);
+  inset-inline-end: 0;
+}

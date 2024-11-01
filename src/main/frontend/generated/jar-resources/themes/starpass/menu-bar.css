@@ -1,0 +1,82 @@
+vaadin-menu-bar::part(container) {
+  /* Space for focus outline */
+  padding: calc(var(--vaadin-focus-ring-width, 2px) + 1px);
+  margin: calc(var(--vaadin-focus-ring-width, 2px) * -1 - 1px);
+}
+
+vaadin-menu-bar-button[aria-haspopup]::part(suffix)::after {
+  content: var(--lumo-icons-dropdown);
+  font-family: lumo-icons;
+  opacity: 0.7;
+}
+
+vaadin-menu-bar-button[aria-haspopup][theme~=icon]::part(suffix)::after {
+  position: absolute;
+  z-index: 1;
+  bottom: 0;
+  right: 0;
+  transition: opacity 120ms;
+}
+
+vaadin-menu-bar-button[theme~=icon]:not(:hover, [active])::part(suffix)::after {
+  opacity: 0;
+}
+
+vaadin-menu-bar-item {
+  border-radius: var(--lumo-border-radius-s);
+}
+
+vaadin-menu-bar-item .hint {
+  color: var(--lumo-secondary-text-color);
+  margin-inline-start: auto;
+  font-weight: 450;
+  display: flex;
+  align-items: center;
+  gap: var(--lumo-space-xs);
+}
+
+vaadin-menu-bar-item.uncheckable {
+  padding-inline-start: var(--lumo-space-s);
+}
+
+vaadin-menu-bar-item.uncheckable::part(checkmark) {
+  display: none;
+}
+
+vaadin-menu-bar.icon-only vaadin-menu-bar-item> :not(vaadin-icon) {
+  display: none;
+}
+
+
+@media (pointer: fine) {
+  vaadin-menu-bar-item {
+    font-size: var(--lumo-font-size-s);
+    min-height: auto;
+  }
+}
+
+vaadin-menu-bar-item::part(checkmark)::before {
+  font-size: var(--lumo-icon-size-s);
+}
+
+vaadin-menu-bar-item[theme~=error] {
+  color: var(--lumo-error-text-color);
+}
+
+vaadin-menu-bar-item[theme~=error]:hover {
+  background-color: var(--lumo-error-color-10pct);
+}
+
+vaadin-menu-bar-item > [theme~=badge]:last-child {
+  margin-inline-start: auto;
+  margin-inline-end: calc(var(--lumo-space-m) * -1);
+}
+
+/* Separated buttons */
+vaadin-menu-bar.separate-buttons::part(container) {
+  gap: var(--lumo-space-xs);
+}
+
+vaadin-menu-bar.separate-buttons vaadin-menu-bar-button {
+  border-radius: var(--lumo-border-radius-m);
+}

@@ -1,0 +1,119 @@
+/* Import statements */
+@import url('./main-layout.css');
+@import url('./views/upload-view.css');
+@import url('./views/resume-view.css');
+@import url('./views/scored-view.css');
+
+/* Layout Components */
+vaadin-app-layout {
+    &::part(drawer) {
+        width: 250px;
+    }
+
+    &::part(content) {
+        padding: var(--lumo-space-m);
+    }
+}
+
+/* Navigation Elements */
+vaadin-tab {
+    &[selected] {
+        background-color: var(--lumo-primary-color-10pct);
+    }
+
+    &:hover {
+        background-color: var(--lumo-contrast-5pct);
+    }
+}
+
+/* Content Styling */
+.content-card {
+    background-color: var(--lumo-base-color);
+    border-radius: var(--lumo-border-radius-l);
+    box-shadow: var(--lumo-box-shadow-s);
+    padding: var(--lumo-space-m);
+    margin: var(--lumo-space-m);
+
+    & h1 {
+        font-size: var(--lumo-font-size-xl);
+        font-weight: 600;
+        color: var(--lumo-header-text-color);
+    }
+}
+
+/* Form Elements */
+vaadin-upload {
+    background-color: var(--lumo-contrast-5pct);
+}
+
+vaadin-text-area {
+    background-color: var(--lumo-base-color);
+}
+
+vaadin-button {
+    border-radius: var(--lumo-border-radius-m);
+}
+
+/* Notifications */
+.notifications {
+    max-height: 350px;
+
+    & vaadin-tabs::part(tabs) {
+        margin-left: var(--lumo-space-xs);
+    }
+
+    & vaadin-message {
+        padding: var(--lumo-space-s) 0 var(--lumo-space-m) 0;
+        margin: 0 var(--lumo-space-m);
+        font-size: var(--lumo-font-size-s);
+        border-bottom: 1px solid var(--lumo-contrast-10pct);
+    }
+}
+
+.no-notifications-msg {
+    padding: var(--lumo-space-m);
+    color: var(--lumo-secondary-text-color);
+}
+
+/* Sidebar */
+.sidebar {
+    width: 80px;
+    padding: 10px;
+    align-items: center;
+    background-color: transparent !important;
+    border-right: 1px solid var(--lumo-contrast-10pct);
+    box-shadow: none;
+}
+
+/* Navigation Buttons */
+.nav-button {
+    width: 50px;
+    height: 50px;
+    margin: 4px 0;
+    padding: 0;
+    border: none;
+    border-radius: 12px;
+    background-color: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s;
+
+    & vaadin-icon {
+        width: 24px;
+        height: 24px;
+        color: var(--lumo-secondary-text-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+.nav-link {
+    margin: 4px 0;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

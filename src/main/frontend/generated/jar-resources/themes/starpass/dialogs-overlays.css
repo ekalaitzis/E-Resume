@@ -1,0 +1,50 @@
+::part(overlay) {
+    background: var(--view-glow), hsl(var(--base-h) var(--base-s) max(calc(var(--base-l) + 7%), 8%));
+    box-shadow: inset 0 0.5px 0 0 var(--lumo-tint-5pct), inset 0 0 0 0.5px var(--lumo-tint-10pct), 0 0 0 1px var(--lumo-shade-5pct), var(--lumo-box-shadow-l);
+    -webkit-backdrop-filter: blur(var(--blur-radius));
+    backdrop-filter: blur(var(--blur-radius));
+    font-weight: inherit;
+}
+
+
+vaadin-dialog-overlay::part(header),
+vaadin-dialog-overlay::part(footer) {
+    background: transparent;
+}
+
+vaadin-dialog-overlay::part(footer) {
+    padding: var(--lumo-space-m);
+}
+
+/* :is(vaadin-select-overlay, vaadin-context-menu-overlay, vaadin-menu-bar-overlay, vaadin-combo-box-overlay, vaadin-multi-select-combo-box-overlay, vaadin-time-picker-overlay) :is([role=menuitem], [role=option]):is(:hover, [expanded]),
+vaadin-item:hover {
+  background-color: var(--lumo-contrast-10pct);
+} */
+
+@media (prefers-reduced-motion) {
+
+    :is([opening], [closing]),
+    :is([opening], [closing])::part(overlay) {
+        animation: none;
+    }
+
+    vaadin-dialog-overlay:is([opening], [closing]),
+    vaadin-dialog-overlay:is([opening], [closing])::part(overlay) {
+        animation: none;
+    }
+}
+
+vaadin-tooltip-overlay {
+    /* TODO should probably be the default style. Without this, tooltips close to the viewport edge can get scrollbars. */
+    inset: 0;
+}
+
+vaadin-tooltip-overlay::part(overlay) {
+    font-weight: 500;
+}
+
+@media (max-width: 420px), (max-height: 420px) {
+    :is(vaadin-context-menu-overlay, vaadin-menu-bar-overlay, vaadin-select-overlay)::part(overlay) {
+        max-height: 80vh;
+    }
+}

@@ -1,0 +1,36 @@
+.grid-wrapper {
+    background-color: var(--lumo-base-color);
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    width: 100%;
+    margin-bottom: var(--lumo-space-m);
+    border: 1px solid var(--lumo-contrast-10pct);
+}
+
+.grid-header {
+    background-color: var(--lumo-contrast-5pct);
+    color: var(--lumo-secondary-text-color);
+    padding: var(--lumo-space-s) var(--lumo-space-m);
+    font-size: var(--lumo-font-size-s);
+    font-weight: 500;
+    border-bottom: 1px solid var(--lumo-contrast-10pct);
+}
+
+.styled-grid {
+    background-color: var(--lumo-base-color);
+    border: none;
+}
+
+/* Grid cell styling */
+.styled-grid::part(cell) {
+    padding: var(--lumo-space-xs) var(--lumo-space-s);
+    border-bottom: 1px solid var(--lumo-contrast-10pct);
+}
+
+/* Grid header styling */
+.styled-grid::part(header-cell) {
+    background-color: var(--lumo-base-color);
+    font-weight: 500;
+    color: var(--lumo-secondary-text-color);
+}

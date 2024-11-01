@@ -1,0 +1,123 @@
+:is(vaadin-button, vaadin-menu-bar-button) {
+  --vaadin-button-background: transparent;
+  --vaadin-button-border: var(--vaadin-button-border-width) solid var(--lumo-contrast-20pct);
+  --vaadin-button-padding: 0 calc(var(--_button-size) / 4 + var(--lumo-border-radius-m) / 2);
+  --vaadin-button-tertiary-padding: var(--vaadin-button-padding);
+  margin: 0;
+  font-weight: 630;
+  box-shadow: 0 1px 1px 0 var(--lumo-shade-2pct);
+}
+
+/* TODO missing from Lumo */
+:is(vaadin-button, vaadin-menu-bar-button)::before {
+  inset: calc(var(--vaadin-button-border-width) * -1);
+}
+
+:is(vaadin-button, vaadin-menu-bar-button)::after {
+  display: none;
+}
+
+@media (any-hover: hover) {
+  :is(vaadin-button, vaadin-menu-bar-button):hover::before {
+    background-color: currentColor;
+    opacity: 0.04;
+  }
+}
+
+:is(vaadin-button, vaadin-menu-bar-button):is(:active, [active])::before {
+  opacity: 0.08;
+}
+
+:is(vaadin-button, vaadin-menu-bar-button):is(:active, [active])[theme~=primary]::before {
+  background-color: black;
+}
+
+/* TODO seems like an issue in Lumo */
+:is(vaadin-button, vaadin-menu-bar-button)[theme*=tertiary] {
+  --vaadin-button-border-width: 0px;
+  box-shadow: none;
+}
+
+:is(vaadin-button, vaadin-menu-bar-button)[theme~=primary] {
+  font-weight: 680;
+  min-width: initial;
+  background-image: linear-gradient(170deg, hsl(0 0% 100% / 0.05), hsl(0 0% 0% / 0.05));
+  background-blend-mode: overlay;
+}
+
+/* TODO issue in Lumo, not using the focus-ring-color custom property for primary buttons */
+:is(vaadin-button, vaadin-menu-bar-button)[focus-ring] {
+  box-shadow: 0 0 0 1px var(--lumo-base-color), 0 0 0 calc(var(--vaadin-focus-ring-width, 2px) + 1px) var(--vaadin-focus-ring-color);
+}
+
+:is(vaadin-button, vaadin-menu-bar-button)[theme~=accent]:not([theme~=primary]) {
+  color: var(--accent-text);
+}
+
+:is(vaadin-button, vaadin-menu-bar-button)[theme~=accent][theme~=primary] {
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+}
+
+:is(vaadin-button, vaadin-menu-bar-button) vaadin-icon[slot$=fix],
+:is(vaadin-button, vaadin-menu-bar-button)[theme~=icon] vaadin-icon {
+  /* TODO bug in Lumo, icon is not vertically centered */
+  vertical-align: top;
+}
+
+:is(vaadin-button, vaadin-menu-bar-button):not([theme~=icon]) vaadin-icon[slot=prefix] {
+  margin-inline-end: var(--lumo-space-xs);
+}
+
+:is(vaadin-button, vaadin-menu-bar-button):not([theme~=icon]) vaadin-icon[slot=suffix] {
+  margin-inline-start: var(--lumo-space-xs);
+}
+
+:is(vaadin-button, vaadin-menu-bar-button)[theme~=tertiary-inline] {
+  padding: 0;
+  cursor: pointer;
+}
+
+@media (any-hover: hover) {
+  :is(vaadin-button, vaadin-menu-bar-button)[theme~=tertiary-inline]:hover {
+    opacity: 0.85;
+  }
+}
+
+/* TODO missing from Lumo, icons end up outside the button boundaries */
+:is(vaadin-button, vaadin-menu-bar-button)[theme~=tertiary-inline]::part(prefix) {
+  margin-inline-start: 0;
+}
+:is(vaadin-button, vaadin-menu-bar-button)[theme~=tertiary-inline]::part(suffix) {
+  margin-inline-end: 0;
+}
+
+:where(vaadin-button, vaadin-menu-bar-button):not([theme~=primary], [theme~=success], [theme~=error]) vaadin-icon,
+:where(vaadin-menu-bar-overlay vaadin-menu-bar-item):not([theme~=primary], [theme~=success], [theme~=error]) vaadin-icon {
+  opacity: 0.7;
+}
+
+/* Ensure icon buttons are square */
+:is(vaadin-button, vaadin-menu-bar-button)[theme~=icon] {
+  width: var(--lumo-button-size);
+  min-width: 0;
+  height: var(--lumo-button-size);
+  padding: 0;
+}
+
+:is(vaadin-button, vaadin-menu-bar-button)[theme~=pill] {
+  border-radius: var(--lumo-button-size);
+  padding-inline-start: 0.75em;
+  padding-inline-end: 0.75em;
+}
+
+/* TODO check why these exist in Lumo */
+vaadin-menu-bar-button > vaadin-menu-bar-item {
+  margin: 0;
+  padding: 0;
+}
+
+vaadin-button [theme~=badge][slot$=fix] {
+  /* Fixes vertical alignment */
+  vertical-align: top;
+}
