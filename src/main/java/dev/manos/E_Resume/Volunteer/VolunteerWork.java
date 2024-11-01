@@ -30,7 +30,7 @@ public class VolunteerWork {
     private Long id;
 
     @ApiModelProperty(value = "Name of the organization", example = "Red Cross")
-    @Column(name = "organizationName", nullable = false)
+    @Column(name = "organization_name", nullable = false)
     private String organizationName;
 
     @ApiModelProperty(value = "Role in the volunteer work", example = "Disaster Relief Volunteer")
@@ -51,7 +51,7 @@ public class VolunteerWork {
     @JsonDeserialize(using = CustomDateDeserializer.class)
     private LocalDate endDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "resume_id", nullable = true, foreignKey = @ForeignKey(name = "fk_resume"))
     @JsonBackReference
     private Resume resume;

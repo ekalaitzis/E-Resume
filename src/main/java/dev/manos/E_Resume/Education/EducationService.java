@@ -1,11 +1,19 @@
 package dev.manos.E_Resume.Education;
 
 import dev.manos.E_Resume.Education.Exception.EducationNotFoundException;
+import dev.manos.E_Resume.Resume.Resume;
+import dev.manos.E_Resume.Resume.ResumeDTO;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.PropertyValues;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -42,4 +50,22 @@ public class EducationService {
         educationRepository.deleteById(id);
     }
 
+//    public Page<EducationDTO> listEducationAsDTO(Long id, Pageable pageable) {
+//        Page<Education> resumePage = educationRepository.findById(id,pageable);
+//        return resumePage.map(EducationDTO::fromEntity);
+//    }
+
+    public List<Education> findEducationByResumeId(Long resumeId) {
+        return new ArrayList<>(educationRepository.findByResumeId(resumeId));
+    }
+
+    public List<Education> findByResumeId(Long resumeId) {
+        return new ArrayList<>(educationRepository.findByResumeId(resumeId));
+    }
+
+
+    public List<EducationDTO> listEducationAsDTO(Long resumeId) {
+        List<Education> educationList = educationRepository.findByResumeId(resumeId);
+        return educationList.stream().map(EducationDTO::fromEntity).toList();
+    }
 }

@@ -1,13 +1,9 @@
 services:
-  ollama:
-    image: 'ollama/ollama:latest'
-    ports:
-      - '11434'
   postgres:
     image: 'postgres:latest'
     environment:
       - 'POSTGRES_DB=resume'
-      - 'POSTGRES_PASSWORD=newpassword'
-      - 'POSTGRES_USER=postgres'
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=${DB_USER}
     ports:
-      - '5432:5432'
+      - '5433:5432'

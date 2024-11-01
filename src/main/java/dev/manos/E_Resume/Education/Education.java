@@ -52,7 +52,7 @@ public class Education {
     @JsonDeserialize(using = CustomDateDeserializer.class)
     private LocalDate graduationDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "resume_id",nullable = true, foreignKey = @ForeignKey(name = "fk_resume"))
     @JsonBackReference
     private Resume resume;

@@ -26,17 +26,16 @@ import java.time.LocalDate;
 public class WorkExperience {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "work_experience_seq")
-    @SequenceGenerator(name = "work_experience_seq", sequenceName = "work_experience_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
     @ApiModelProperty(value = "Name of the company", example = "Tech Innovations Inc.")
-    @Column(name = "company_name", nullable = false)
+    @Column(name = "company_name")
     private String companyName;
 
     @ApiModelProperty(value = "Job title", example = "Senior Software Engineer")
-    @Column(name = "job_title", nullable = false)
+    @Column(name = "job_title")
     private String jobTitle;
 
     @ApiModelProperty(value = "Description of job responsibilities and achievements", example = "Led a team of 5 developers in building a cloud-based analytics platform")

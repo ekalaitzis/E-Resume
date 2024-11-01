@@ -1,6 +1,8 @@
 package dev.manos.E_Resume.Certification;
 
 import dev.manos.E_Resume.Certification.Exception.CertificationNotFoundException;
+import dev.manos.E_Resume.Project.Project;
+import dev.manos.E_Resume.Project.ProjectDTO;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,4 +44,8 @@ public class CertificationService {
         certificationRepository.deleteById(id);
     }
 
+    public List<CertificationDTO> listCertificationAsDTO(Long id) {
+        List<Certification> certificationList = certificationRepository.findByResumeId(id);
+        return certificationList.stream().map(CertificationDTO::fromEntity).toList();
+    }
 }

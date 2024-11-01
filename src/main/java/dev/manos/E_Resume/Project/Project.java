@@ -31,7 +31,7 @@ public class Project {
     @Column(name = "description", nullable = true, length = 5000)
     private String description;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "resume_id", nullable = true, foreignKey = @ForeignKey(name = "fk_resume"))
     @JsonBackReference
     private Resume resume;

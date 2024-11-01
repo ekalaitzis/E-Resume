@@ -89,13 +89,13 @@ public class Resume {
 
     @ApiModelProperty(value = "List of work experiences")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<WorkExperience> workExperience;
 
     @ApiModelProperty(value = "List of educational qualifications")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Education> education;
 
@@ -115,19 +115,20 @@ public class Resume {
 
     @ApiModelProperty(value = "List of projects")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Project> projects;
 
     @ApiModelProperty(value = "List of volunteer work experiences")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<VolunteerWork> volunteerWork;
 
     @ApiModelProperty(value = "List of Certifications or courses")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Certification> certificationsAndCourses;
+
 }

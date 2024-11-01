@@ -1,5 +1,7 @@
 package dev.manos.E_Resume.WorkExperience;
 
+import dev.manos.E_Resume.Education.Education;
+import dev.manos.E_Resume.Education.EducationDTO;
 import dev.manos.E_Resume.WorkExperience.Exception.WorkExperienceNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -42,4 +44,8 @@ public class WorkExperienceService {
         workExperienceRepository.deleteById(id);
     }
 
+    public List<WorkExperienceDTO> listWorkExperienceAsDTO(Long id) {
+        List<WorkExperience> workExperienceList = workExperienceRepository.findByResumeId(id);
+        return workExperienceList.stream().map(WorkExperienceDTO::fromEntity).toList();
+    }
 }

@@ -1,5 +1,7 @@
 package dev.manos.E_Resume.Volunteer;
 
+import dev.manos.E_Resume.Project.Project;
+import dev.manos.E_Resume.Project.ProjectDTO;
 import dev.manos.E_Resume.Volunteer.Exception.VolunteerWorkNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -41,4 +43,7 @@ public class VolunteerService {
         volunteerRepository.deleteById(id);
     }
 
+    public List<VolunteerWorkDTO> listVolunteerWorkAsDTO(Long id) {
+        List<VolunteerWork> volunteerWorkList = volunteerRepository.findByResumeId(id);
+        return volunteerWorkList.stream().map(VolunteerWorkDTO::fromEntity).toList();    }
 }

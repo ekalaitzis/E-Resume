@@ -27,12 +27,7 @@ public class CustomDateDeserializer extends JsonDeserializer<LocalDate> {
 
     static {
         // Add various date formats
-        String[] patterns = {
-                "yyyy-MM-dd", "dd/MM/yyyy", "MM/dd/yyyy", "yyyy/MM/dd",
-                "dd-MM-yyyy", "MM-dd-yyyy", "yyyy.MM.dd", "dd.MM.yyyy", "MM.dd.yyyy",
-                "dd MMM yyyy", "MMM dd yyyy", "MMMM dd yyyy", "dd MMMM yyyy",
-                "yyyy", "MMM yyyy", "MMMM yyyy"
-        };
+        String[] patterns = {"yyyy-MM-dd", "dd/MM/yyyy", "MM/dd/yyyy", "yyyy/MM/dd", "dd-MM-yyyy", "MM-dd-yyyy", "yyyy.MM.dd", "dd.MM.yyyy", "MM.dd.yyyy", "dd MMM yyyy", "MMM dd yyyy", "MMMM dd yyyy", "dd MMMM yyyy", "yyyy", "MMM yyyy", "MMMM yyyy"};
         for (String pattern : patterns) {
             FORMATTERS.add(DateTimeFormatter.ofPattern(pattern, Locale.ENGLISH));
         }
@@ -137,8 +132,7 @@ public class CustomDateDeserializer extends JsonDeserializer<LocalDate> {
     }
 
     private int parseMonth(String monthName) {
-        String[] months = {"january", "february", "march", "april", "may", "june",
-                "july", "august", "september", "october", "november", "december"};
+        String[] months = {"january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"};
         String lowercaseMonth = monthName.toLowerCase();
         for (int i = 0; i < months.length; i++) {
             if (months[i].startsWith(lowercaseMonth)) {

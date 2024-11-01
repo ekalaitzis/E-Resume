@@ -43,7 +43,7 @@ public class Certification {
     @JsonDeserialize(using = CustomDateDeserializer.class)
     private LocalDate date;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "resume_id", foreignKey = @ForeignKey(name = "fk_resume"))
     @JsonBackReference
     private Resume resume;

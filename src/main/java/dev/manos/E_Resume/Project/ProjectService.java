@@ -14,8 +14,6 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
 
-
-
     public List<Project> getAllProjects() {
         return projectRepository.findAll();
     }
@@ -31,7 +29,7 @@ public class ProjectService {
     public Project updateProject(Project updatedProject) {
         List<Project> allProjects = getAllProjects();
 
-        if(allProjects.stream().anyMatch(c -> c.getId().equals(updatedProject.getId()))) {
+        if (allProjects.stream().anyMatch(c -> c.getId().equals(updatedProject.getId()))) {
             return projectRepository.save(updatedProject);
         } else {
             throw new ProjectNotFoundException("Project with id: " + updatedProject.getId() + " not found.");
@@ -42,4 +40,8 @@ public class ProjectService {
         projectRepository.deleteById(id);
     }
 
+    public List<ProjectDTO> listProjectAsDTO(Long id) {
+        List<Project> projectList = projectRepository.findByResumeId(id);
+        return projectList.stream().map(ProjectDTO::fromEntity).toList();
+    }
 }
