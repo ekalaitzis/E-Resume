@@ -1,0 +1,80 @@
+vaadin-tabs {
+  background: var(--lumo-contrast-10pct);
+  border-radius: calc(var(--lumo-border-radius-s) + 3px);
+  min-height: var(--lumo-size-m);
+  box-shadow: none;
+}
+
+vaadin-tabs::part(tabs) {
+  padding: 3px;
+  margin: 0;
+  min-height: inherit;
+  box-sizing: border-box;
+}
+
+/* TODO seems like a missing style in Lumo */
+vaadin-tabsheet {
+  box-sizing: border-box;
+}
+
+vaadin-tabsheet::part(tabs-container) {
+  box-shadow: none;
+  padding: var(--lumo-space-m);
+}
+
+vaadin-tabsheet::part(content) {
+  padding: 0;
+}
+
+vaadin-tabsheet > vaadin-tabs {
+  margin: 0;
+}
+
+vaadin-tabsheet[theme~=bordered] {
+  border-color: var(--lumo-contrast-10pct);
+  border-top-left-radius: calc(var(--lumo-border-radius-s) + var(--lumo-space-s));
+  border-top-right-radius: calc(var(--lumo-border-radius-s) + var(--lumo-space-s));
+}
+
+vaadin-tabsheet[overflow~=top]::part(content) {
+  border-top: 1px solid var(--lumo-contrast-10pct);
+}
+
+vaadin-tabsheet:not([theme~=bordered])[overflow~=bottom]::part(content) {
+  border-bottom: 1px solid var(--lumo-contrast-10pct);
+}
+
+vaadin-tab::before,
+vaadin-tab::after {
+  display: none;
+}
+
+vaadin-tab {
+  font-weight: 600;
+  border-radius: var(--lumo-border-radius-s);
+  transition:
+    color 160ms,
+    background-color 160ms,
+    box-shadow 60ms,
+    transform 200ms,
+    -webkit-backdrop-filter 200ms,
+    backdrop-filter 200ms;
+  padding: var(--lumo-space-xs) var(--lumo-space-m);
+  flex: auto;
+}
+
+vaadin-tab[selected] {
+  color: var(--lumo-header-text-color);
+  background-color: var(--lumo-tint-30pct);
+  -webkit-backdrop-filter: brightness(1.06);
+  backdrop-filter: brightness(1.06);
+}
+
+vaadin-tab[active] {
+  transform: scale(0.98);
+  transition-duration: 50ms;
+}
+
+vaadin-tab[selected]:not([focus-ring]) {
+  box-shadow: 0 0 0 1px var(--lumo-shade-5pct), 0 1px 1px 0 var(--lumo-shade-5pct);
+}

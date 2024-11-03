@@ -1,0 +1,5 @@
+#table {
+  /* TODO should probably be included in Grid core styles (restores scroll-rubberbanding on iOS) */
+  /* TODO only apply this if the grid covers the whole viewport, as it prevents the user from getting past the grid */
+  /* overscroll-behavior: contain; */
+}

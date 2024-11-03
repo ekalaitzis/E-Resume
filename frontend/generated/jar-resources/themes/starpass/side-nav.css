@@ -1,0 +1,129 @@
+vaadin-side-nav,
+vaadin-side-nav-item {
+  display: grid;
+  grid-template-rows: min-content 1fr;
+  --transition-duration: 260ms;
+  transition: grid-template-rows var(--transition-duration);
+  line-height: var(--lumo-line-height-xs); /* Only set on vaadin-side-nav in Lumo, but we are using vaadin-side-nav-item as a standalone element as well */
+}
+
+vaadin-side-nav[collapsed],
+vaadin-side-nav-item:not([expanded]) {
+  grid-template-rows: min-content 0fr;
+}
+
+vaadin-side-nav::part(label) {
+  font-weight: 600;
+  min-width: 0; /* TODO missing from core styles, allow the items to shrink */
+  padding-inline-start: var(--_child-indent, 0px);
+}
+
+/* TODO missing from core styles, allow the items to shrink */
+vaadin-side-nav > [slot=label] {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+  padding: var(--lumo-space-s);
+  margin-bottom: var(--lumo-space-xs);
+}
+
+vaadin-side-nav::part(children),
+vaadin-side-nav-item::part(children) {
+  /* TODO part=children has [hidden] with "display: none !important" in shadow DOM which overrides this */
+  display: flex;
+  flex-direction: column;
+  gap: var(--lumo-space-xs);
+  min-height: 0;
+  transition: visibility var(--transition-duration), opacity var(--transition-duration);
+}
+
+vaadin-side-nav[collapsed]::part(children),
+vaadin-side-nav-item:not([expanded])::part(children) {
+  visibility: hidden;
+  opacity: 0;
+}
+
+vaadin-side-nav::part(toggle-button) {
+  font-size: var(--lumo-font-size-s);
+  font-weight: normal; /* TODO seems to be missing from Lumo */
+}
+
+vaadin-side-nav-item::part(link) {
+  font-weight: 600;
+  min-height: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+  gap: 0;
+  /* Same padding as for buttons */
+  padding: calc((var(--lumo-size-m) - var(--lumo-icon-size-s)) / 2 - var(--view-border-width));
+  padding-inline-start: calc((var(--lumo-size-m) - var(--lumo-icon-size-s)) / 2 - var(--view-border-width) + var(--_child-indent, 0px));
+}
+
+vaadin-side-nav-item::part(content) {
+  border-style: solid;
+  border-width: var(--view-border-width);
+  border-color: transparent;
+  border-radius: var(--lumo-border-radius-m);
+  color: var(--lumo-contrast-80pct);
+  box-sizing: border-box;
+  min-height: var(--lumo-size-m);
+  min-width: 0; /* TODO missing from core styles, allow the items to shrink */
+  position: relative; /* Allow absolute positioning of badges. The backdrop-filter applied on :hover and :active does the same as well */
+  transition: background-color 200ms, backdrop-filter 200ms, -webkit-backdrop-filter 200ms;
+}
+
+vaadin-side-nav-item::part(content):hover {
+  background: var(--lumo-tint-5pct);
+  -webkit-backdrop-filter: brightness(1.02);
+  backdrop-filter: brightness(1.02);
+}
+
+/* TODO this seems like incorrect styles in Lumo */
+vaadin-side-nav-item::part(link):active:focus {
+  background-color: transparent;
+}
+/* Should be this instead */
+vaadin-side-nav-item::part(content):active {
+  background: var(--lumo-tint-10pct);
+}
+
+vaadin-side-nav-item[current]::part(content) {
+  color: var(--lumo-header-text-color);
+  /* background: var(--lumo-contrast-10pct);
+  border-color: var(--lumo-contrast-5pct); */
+  background: var(--lumo-tint-5pct);
+  border-color: var(--lumo-contrast-10pct);
+  background-clip: var(--view-background-clip);
+  -webkit-backdrop-filter: brightness(1.04);
+  backdrop-filter: brightness(1.04);
+}
+
+vaadin-side-nav-item[has-children]::part(content) {
+  padding-inline-end: 0;
+}
+
+vaadin-side-nav-item::part(toggle-button) {
+  margin-inline-end: 0;
+}
+
+vaadin-side-nav-item vaadin-icon {
+  color: inherit;
+  opacity: 0.7;
+  /* TODO slightly problematic default in Lumo, with 0.1em padding */
+  padding: 0;
+  width: var(--lumo-icon-size-s);
+  height: var(--lumo-icon-size-s);
+}
+
+vaadin-side-nav vaadin-side-nav-item:is([current], :hover) vaadin-icon {
+  opacity: 0.8;
+}
+
+:is(vaadin-side-nav, vaadin-side-nav-item).small {
+  font-size: var(--lumo-font-size-s);
+}
+
+vaadin-side-nav + vaadin-side-nav {
+  margin-top: var(--lumo-space-s);
+}

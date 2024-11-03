@@ -1,0 +1,14 @@
+vaadin-progress-bar {
+  height: 12px;
+}
+
+vaadin-progress-bar::part(bar) {
+  border: 1px solid var(--lumo-contrast-30pct);
+  padding: 2px;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+vaadin-progress-bar[theme~=accent]::part(value) {
+  background-color: var(--accent);
+}

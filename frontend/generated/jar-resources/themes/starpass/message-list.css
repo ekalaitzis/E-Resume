@@ -1,0 +1,129 @@
+vaadin-message {
+  padding: var(--lumo-space-s) var(--lumo-space-l);
+  cursor: default;
+  gap: var(--lumo-space-m);
+}
+
+vaadin-message::part(name) {
+  font-weight: 700;
+  line-height: var(--lumo-line-height-xs);
+}
+
+vaadin-message::part(time) {
+  font-size: var(--lumo-font-size-xs);
+  line-height: var(--lumo-line-height-xs);
+}
+
+vaadin-message vaadin-avatar {
+  margin: 0;
+}
+
+vaadin-message-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+}
+
+vaadin-message-list::part(list) {
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+}
+
+vaadin-message-list.one-to-one {
+  background: linear-gradient(transparent, var(--lumo-shade-2pct) 100px, var(--lumo-shade-2pct) calc(100% - 100px), transparent);
+}
+
+vaadin-message-list.one-to-one vaadin-message::part(content) {
+  max-width: 80%;
+  flex-grow: 0;
+  width: fit-content;
+  gap: var(--lumo-space-xs);
+}
+
+vaadin-message-list.one-to-one vaadin-message::part(message) {
+  padding: var(--lumo-space-s) var(--lumo-space-m);
+  border-radius: var(--lumo-border-radius-l);
+  background: linear-gradient(var(--lumo-tint-5pct), var(--lumo-tint-5pct)) var(--lumo-base-color);
+  box-shadow: inset 0 0 0 1px var(--lumo-contrast-20pct), 0 1px 3px -1px var(--lumo-shade-10pct);
+}
+
+vaadin-message-list.one-to-one vaadin-message:not(.me)::part(message) {
+  border-end-start-radius: 0;
+}
+
+vaadin-message-list.one-to-one vaadin-message.me::part(message) {
+  border-end-end-radius: 0;
+}
+
+
+vaadin-message-list.one-to-one vaadin-message vaadin-avatar {
+  align-self: end;
+  margin-bottom: var(--lumo-space-xs);
+  display: none;
+}
+
+vaadin-message-list.one-to-one vaadin-message::part(name) {
+  font-size: var(--lumo-font-size-xs);
+  font-weight: 500;
+  margin: 0;
+  display: none;
+}
+
+vaadin-message-list.one-to-one vaadin-message::part(header) {
+  order: 1;
+  min-height: 0;
+  gap: var(--lumo-space-s);
+}
+
+vaadin-message-list.one-to-one vaadin-message.me {
+  flex-direction: row-reverse;
+}
+
+vaadin-message-list.one-to-one vaadin-message.me::part(header) {
+  justify-content: end;
+  flex-direction: row-reverse;
+}
+
+vaadin-message-list.one-to-one vaadin-message.me::part(message) {
+  background: var(--accent-10pct);
+  box-shadow: inset 0 0 0 1px var(--lumo-contrast-10pct), 0 1px 3px -1px var(--lumo-shade-10pct);
+}
+
+vaadin-message-list vaadin-message.new-messages {
+  padding-inline-start: 0;
+  margin-inline-start: -1000%;
+}
+
+vaadin-message-list vaadin-message.new-messages::part(header),
+vaadin-message-list vaadin-message.new-messages > vaadin-avatar {
+  display: none;
+}
+
+vaadin-message-list vaadin-message.new-messages::part(content) {
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  max-width: none;
+}
+
+vaadin-message-list vaadin-message.new-messages::part(content)::before {
+  content: "";
+  flex: auto;
+  display: block;
+  height: 1px;
+  width: 100%;
+  background: var(--lumo-error-color-50pct);
+}
+
+vaadin-message-list vaadin-message.new-messages::part(message) {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  border: 0;
+  box-shadow: none;
+  color: var(--lumo-error-text-color);
+  font-size: var(--lumo-font-size-s);
+  font-weight: 600;
+  line-height: 1;
+}

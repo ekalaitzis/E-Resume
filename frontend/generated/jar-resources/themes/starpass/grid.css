@@ -1,0 +1,29 @@
+vaadin-grid::part(header-cell) {
+  min-height: var(--lumo-size-m);
+}
+
+vaadin-grid.transparent-body {
+  background: transparent;
+  --vaadin-grid-cell-background: transparent;
+}
+
+vaadin-grid.transparent-body::part(header-cell) {
+  --vaadin-grid-cell-background: var(--lumo-base-color);
+}
+
+vaadin-grid.no-header::part(header-cell) {
+  height: 0;
+  min-height: 0;
+  overflow: hidden;
+  border-bottom-color: transparent;
+  --vaadin-grid-cell-background: transparent;
+}
+
+vaadin-grid.no-header[overflow~=top]::part(header-cell) {
+  border-bottom-color: var(--lumo-contrast-10pct);
+}
+
+/* Missing from Lumo */
+vaadin-grid::part(body-cell)::before {
+  border-radius: inherit;
+}

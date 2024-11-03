@@ -1,0 +1,23 @@
+:is(vaadin-details, vaadin-accordion-panel) {
+  display: grid;
+  grid-template-rows: min-content 0fr;
+  transition: grid-template-rows 300ms;
+}
+
+:is(vaadin-details, vaadin-accordion-panel)[opened] {
+  grid-template-rows: min-content 1fr;
+}
+
+:is(vaadin-details, vaadin-accordion-panel)::part(content) {
+  display: block;
+  overflow: hidden;
+  min-height: 0;
+  padding: 0; /* TODO the actual content within should define the white space it needs */
+  transition: visibility 300ms, opacity 300ms;
+}
+
+:is(vaadin-details, vaadin-accordion-panel):not([opened])::part(content) {
+  visibility: hidden;
+  pointer-events: none;
+  opacity: 0;
+}

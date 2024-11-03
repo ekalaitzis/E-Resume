@@ -1,0 +1,19 @@
+html {
+  --vaadin-input-field-background: var(--lumo-contrast-5pct);
+  --vaadin-input-field-border-width: 1px;
+  --vaadin-input-field-border-color: var(--lumo-contrast-30pct);
+}
+
+:is(vaadin-text-field,vaadin-password-field,vaadin-combo-box, vaadin-multi-select-combo-box, vaadin-date-picker,vaadin-time-picker,vaadin-select,vaadin-number-field,vaadin-email-field,vaadin-text-area) {
+  padding: var(--lumo-space-xs) 0;
+}
+
+:is(vaadin-text-field, vaadin-password-field, vaadin-combo-box, vaadin-multi-select-combo-box, vaadin-date-picker, vaadin-time-picker, vaadin-select, vaadin-number-field, vaadin-email-field, vaadin-text-area)[focused]::part(input-field) {
+  box-shadow: 0 0 0 var(--_focus-ring-width) var(--_focus-ring-color);
+}
+
+
+vaadin-text-area::part(input-field) {
+  padding-top: calc((var(--lumo-text-field-size) - var(--lumo-line-height-s)) / 2);
+  padding-bottom: calc((var(--lumo-text-field-size) - var(--lumo-line-height-s)) / 2);
+}

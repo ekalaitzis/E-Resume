@@ -1,0 +1,73 @@
+
+[theme~=badge] {
+  padding: var(--lumo-space-xs) calc(var(--lumo-space-xs) * 1.5);
+  font-size: var(--lumo-font-size-xs);
+  font-weight: 620;
+  color: var(--lumo-secondary-text-color);
+}
+
+[theme~=badge][theme~=small] {
+  font-size: var(--lumo-font-size-xxs);
+  font-weight: 660;
+}
+
+[theme~=badge][theme~=accent] {
+  background-color: var(--accent-10pct);
+  color: var(--accent-text);
+}
+
+[theme~=badge][theme~=accent][theme~=primary] {
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+}
+
+[theme~=badge][theme~=dimmed] {
+  background: transparent;
+  color: var(--lumo-contrast-60pct);
+}
+
+/* Empty badges (dots) are too big by default */
+[theme~=badge]:not([icon]):empty,
+[theme~=badge][theme~=dot] {
+  font-size: 0;
+  padding: 0.25rem;
+  width: 0;
+  height: 0;
+  border-radius: 100%;
+}
+
+[theme~=badge][theme~=small]:not([icon]):empty,
+[theme~=badge][theme~=small][theme~=dot] {
+  padding: 0.1875rem;
+}
+
+[theme~=badge][theme~=dot]::before {
+  font-size: var(--lumo-font-size-xs);
+}
+
+[theme~=badge][theme~=small][theme~=dot]::before {
+  font-size: var(--lumo-font-size-xxs);
+}
+
+[theme~=badge] vaadin-icon {
+  width: var(--lumo-icon-size-s);
+  height: var(--lumo-icon-size-s);
+}
+
+[theme~=badge] vaadin-icon,
+[theme~=badge]::before {
+  margin: calc(var(--lumo-space-xs) * -1) 0;
+}
+
+[theme~=badge][theme~=small] vaadin-icon {
+  width: calc(var(--lumo-icon-size-s) * 0.8);
+  height: calc(var(--lumo-icon-size-s) * 0.8);
+}
+
+[theme~=badge] vaadin-icon:first-child {
+  margin-inline-start: calc(var(--lumo-space-xs) * -1.5);
+}
+
+[theme~=badge] vaadin-icon:last-child {
+  margin-inline-end: calc(var(--lumo-space-xs) * -1.5);
+}

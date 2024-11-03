@@ -1,0 +1,23 @@
+vaadin-notification-card[theme~=primary]::part(overlay) {
+    background: var(--lumo-primary-color);
+}
+
+vaadin-notification-card[theme~=success]::part(overlay) {
+    background: var(--lumo-success-color);
+}
+
+vaadin-notification-card[theme~=warning]::part(overlay) {
+    background: var(--lumo-warning-color);
+}
+
+vaadin-notification-card[theme~=error]::part(overlay) {
+    background: var(--lumo-error-color);
+}
+
+vaadin-notification-card[theme~=contrast]::part(overlay) {
+    background: var(--lumo-contrast);
+}
+
+vaadin-notification-card[theme~=about-dialog-hint]::part(overlay) {
+    margin-inline-start: var(--lumo-size-xl);
+}

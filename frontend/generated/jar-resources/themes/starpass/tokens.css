@@ -1,0 +1,224 @@
+html,
+html[theme] {
+  --base-h: 220;
+  --base-s: 35%;
+  --base-l: 90%;
+
+  --accent-h: 218;
+  --accent-s: 80%;
+  --accent-l: 47%;
+  --accent: hsl(var(--accent-h) var(--accent-s) var(--accent-l));
+  --accent-10pct: hsl(var(--accent-h) var(--accent-s) var(--accent-l) / 0.12);
+  --accent-text: hsl(var(--accent-h) var(--accent-s) calc(var(--accent-l) - 3%));
+  --accent-contrast: hsl(0 0% calc(100% - 100 * clamp(0%, var(--accent-l) - 50%, 1%)));
+  accent-color: var(--accent);
+
+  --grad1: linear-gradient(to bottom right,
+      hsl(var(--base-h) calc(var(--base-s) * 1.5) calc(var(--base-l) + 6%)) 20%,
+      hsl(var(--base-h) var(--base-s) var(--base-l)) 50%,
+      hsl(calc(var(--base-h) - 30) var(--base-s) calc(33% + var(--base-l) / 1.5)) 100%);
+  --grad2: radial-gradient(50% 80% at 25% 70%,
+      hsl(calc(var(--base-h) - 5) calc(var(--base-s) * 1.5) calc(var(--base-l) - 10%) / 0.4) 0%,
+      transparent 100%);
+  --grad3: radial-gradient(83% 132% at 76% 20%,
+      transparent 84%,
+      hsl(var(--base-h) var(--base-s) calc(var(--base-l) + 10%) / 0.8) 100%);
+  --bg: var(--grad3), var(--grad2), var(--grad1), hsl(var(--base-h) var(--base-s) var(--base-l));
+
+  --lumo-base-color: hsl(var(--base-h) var(--base-s) 100%);
+  --lumo-base-color-90pct: hsl(var(--base-h) var(--base-s) 100% / 0.9);
+  --lumo-base-color-80pct: hsl(var(--base-h) var(--base-s) 100% / 0.8);
+  --lumo-base-color-70pct: hsl(var(--base-h) var(--base-s) 99% / 0.7);
+  --lumo-base-color-60pct: hsl(var(--base-h) var(--base-s) 99% / 0.6);
+
+  --lumo-disabled-text-color: var(--lumo-contrast-40pct);
+
+  --lumo-primary-contrast-color: var(--lumo-base-color);
+  --lumo-primary-color: var(--lumo-contrast-90pct);
+  --lumo-primary-color-50pct: var(--lumo-contrast-70pct);
+  --lumo-primary-color-10pct: var(--lumo-contrast-10pct);
+  --lumo-primary-text-color: var(--lumo-body-text-color);
+
+  --vaadin-focus-ring-color: hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .75);
+
+  --lumo-error-text-color: hsl(342 70% 43%);
+  --lumo-error-color: hsl(342 68% 51%);
+  --lumo-error-color-10pct: hsl(342 68% 51% / 0.13);
+  --lumo-error-color-50pct: hsl(342 68% 51% / 0.6);
+
+  --lumo-success-text-color: hsl(160 98% 22%);
+  --lumo-success-color: hsl(160 88% 27%);
+  --lumo-success-color-10pct: hsl(160 88% 27% / 0.14);
+  --lumo-success-color-50pct: hsl(160 88% 27% / 0.6);
+
+  --lumo-tint-5pct: hsla(0, 0%, 100%, 0.19);
+  --lumo-tint-10pct: hsla(0, 0%, 100%, 0.29);
+  --lumo-tint-20pct: hsla(0, 0%, 100%, 0.38);
+  --lumo-tint-30pct: hsla(0, 0%, 100%, 0.45);
+  --lumo-tint-40pct: hsla(0, 0%, 100%, 0.51);
+  --lumo-tint-50pct: hsla(0, 0%, 100%, 0.57);
+  --lumo-tint-60pct: hsla(0, 0%, 100%, 0.66);
+  --lumo-tint-70pct: hsla(0, 0%, 100%, 0.74);
+  --lumo-tint-80pct: hsla(0, 0%, 100%, 0.82);
+  --lumo-tint-90pct: hsla(0, 0%, 100%, 0.9);
+  --lumo-tint: #fff;
+
+  --lumo-shade-2pct: hsl(var(--base-h) min(calc(var(--base-s) * 1.2), 35%) 41% / 0.04);
+  --lumo-shade-5pct: hsl(var(--base-h) min(calc(var(--base-s) * 1.12), 35%) 40% / 0.06);
+  --lumo-shade-10pct: hsl(var(--base-h) min(calc(var(--base-s) * 1.08), 35%) 39% / 0.09);
+  --lumo-shade-20pct: hsl(var(--base-h) min(calc(var(--base-s) * 1.04), 35%) 37% / 0.15);
+  --lumo-shade-30pct: hsl(var(--base-h) min(calc(var(--base-s) * 1), 35%) 34% / 0.22);
+  --lumo-shade-40pct: hsl(var(--base-h) min(calc(var(--base-s) * 0.96), 35%) 31% / 0.38);
+  --lumo-shade-50pct: hsl(var(--base-h) min(calc(var(--base-s) * 0.92), 35%) 28% / 0.55);
+  --lumo-shade-60pct: hsl(var(--base-h) min(calc(var(--base-s) * 0.9), 35%) 25% / 0.68);
+  --lumo-shade-70pct: hsl(var(--base-h) min(calc(var(--base-s) * 0.9), 35%) 22% / 0.8);
+  --lumo-shade-80pct: hsl(var(--base-h) min(calc(var(--base-s) * 0.8), 35%) 19% / 0.91);
+  --lumo-shade-90pct: hsl(var(--base-h) min(calc(var(--base-s) * 0.8), 35%) 16% / 0.98);
+  --lumo-shade: hsl(var(--base-h) min(calc(var(--base-s) * 0.8), 35%) 12%);
+
+  --lumo-font-family: Satoshi, system-ui, ui-sans-serif, sans-serif;
+  font-weight: 430;
+
+  --lumo-font-size-xxxl: 2rem;
+  --lumo-font-size-xxl: 1.5rem;
+  --lumo-font-size-xl: 1.25rem;
+  --lumo-font-size-l: 1.0625rem;
+  --lumo-font-size-m: 0.9375rem;
+  --lumo-font-size-s: 0.875rem;
+  --lumo-font-size-xs: 0.75rem;
+  --lumo-font-size-xxs: 0.625rem;
+
+  --lumo-line-height-xl: 2rem;
+  --lumo-line-height-l: 1.75rem;
+  --lumo-line-height-m: 1.625rem;
+  --lumo-line-height-s: 1.375rem;
+  --lumo-line-height-xs: 1.125rem;
+
+  --lumo-border-radius-l: 12px;
+  --lumo-border-radius-m: 7px;
+  --lumo-border-radius-s: 5px;
+
+  --lumo-size-xl: 3rem;
+  --lumo-size-l: 2.5rem;
+  --lumo-size-m: 2.125rem;
+  --lumo-size-s: 1.875rem;
+  --lumo-size-xs: 1.625rem;
+
+  /* TODO 1lh would be the natural choice for all of these, but it's harder to use with calc() */
+  --lumo-icon-size-l: var(--lumo-line-height-m);
+  --lumo-icon-size-m: var(--lumo-line-height-s);
+  --lumo-icon-size-s: var(--lumo-line-height-xs);
+
+  --view-glow: radial-gradient(circle at 25% 0%, hsl(0 0% 100% / 0.3), transparent 50%);
+  --view-background: var(--view-glow), hsl(var(--base-h) var(--base-s) max(calc(var(--base-l) + 10%), 90%) / 0.8);
+  --view-background-clip: padding-box;
+  --view-border-width: 1px;
+  --view-border-color: var(--lumo-contrast-10pct) var(--lumo-contrast-10pct) var(--lumo-contrast-20pct);
+  --view-box-shadow: 0 1px 1px 0 var(--lumo-shade-10pct);
+  --view-inset: 1vmax;
+
+  --vaadin-button-border-width: 1px;
+
+  --blur-radius: 20px;
+}
+
+@media (pointer: coarse) {
+  html,
+  html[theme] {
+    --lumo-font-size-xxxl: 2rem;
+    --lumo-font-size-xxl: 1.75rem;
+    --lumo-font-size-xl: 1.5rem;
+    --lumo-font-size-l: 1.25rem;
+    --lumo-font-size-m: 1.0625rem;
+    --lumo-font-size-s: 0.9375rem;
+    --lumo-font-size-xs: 0.875rem;
+    --lumo-font-size-xxs: 0.75rem;
+
+    --lumo-line-height-xl: 2rem;
+    --lumo-line-height-l: 1.75rem;
+    --lumo-line-height-m: 1.5rem;
+    --lumo-line-height-s: 1.375rem;
+    --lumo-line-height-xs: 1.25rem;
+
+    --lumo-size-xl: 3.75rem;
+    --lumo-size-l: 3.125rem;
+    --lumo-size-m: 2.75rem;
+    --lumo-size-s: 2.25rem;
+    --lumo-size-xs: 1.75rem;
+  }
+}
+
+[theme~=dark],
+html[theme~=dark] {
+  --base-l: 6%;
+  --base-s: 22%;
+
+  --grad1: linear-gradient(to bottom right,
+      hsl(var(--base-h) var(--base-s) calc(var(--base-l) + 3%)) 20%,
+      hsl(var(--base-h) var(--base-s) calc(var(--base-l) + 0%)) 50%,
+      hsl(calc(var(--base-h) - 10) calc(var(--base-s) * 1.2) var(--base-l)) 100%);
+  --grad2: radial-gradient(50% 80% at 25% 70%,
+      hsl(calc(var(--base-h) - 10) calc(var(--base-s) * 1.5) calc(var(--base-l) + 10%) / 0.4) 0%,
+      transparent 100%);
+  --grad3: radial-gradient(83% 132% at 76% 20%,
+      transparent 84%,
+      hsl(var(--base-h) var(--base-s) calc(var(--base-l) - 6%) / 0.8) 100%);
+
+  --lumo-base-color: hsl(var(--base-h) var(--base-s) max(calc(var(--base-l) + 5%), 8%) / 1);
+  --lumo-base-color-90pct: hsl(var(--base-h) var(--base-s) max(calc(var(--base-l) + 5%), 8%) / 0.9);
+  --lumo-base-color-80pct: hsl(var(--base-h) var(--base-s) max(calc(var(--base-l) + 5%), 8%) / 0.8);
+  --lumo-base-color-70pct: hsl(var(--base-h) var(--base-s) max(calc(var(--base-l) + 5%), 8%) / 0.7);
+  --lumo-base-color-60pct: hsl(var(--base-h) var(--base-s) max(calc(var(--base-l) + 5%), 8%) / 0.6);
+
+  --accent-h: 210;
+  --accent-10pct: hsl(var(--accent-h) var(--accent-s) var(--accent-l) / 0.18);
+  --accent-text: hsl(calc(var(--accent-h) - 3) calc(var(--accent-s) * 1.25) calc(var(--accent-l) * 1.3));
+
+  --vaadin-focus-ring-color: hsl(var(--accent-h) calc(var(--accent-s) * 1.25) calc(var(--accent-l) * 1.3) / .65);
+
+  --lumo-primary-contrast-color: var(--lumo-base-color);
+  --lumo-primary-color: var(--lumo-contrast-90pct);
+  --lumo-primary-color-50pct: var(--lumo-contrast-70pct);
+  --lumo-primary-color-10pct: var(--lumo-contrast-10pct);
+  --lumo-primary-text-color: var(--lumo-body-text-color);
+
+  --lumo-error-text-color: hsl(342 85% 70%);
+  --lumo-error-color: hsl(342 68% 51%);
+  --lumo-error-color-10pct: hsl(342 68% 61% / 0.16);
+  --lumo-error-color-50pct: hsl(342 68% 61% / 0.65);
+
+  --lumo-success-text-color: hsl(160 88% 52%);
+  --lumo-success-color: hsl(160 78% 31%);
+  --lumo-success-color-10pct: hsl(160 78% 37% / 0.18);
+  --lumo-success-color-50pct: hsl(160 78% 37% / 0.65);
+
+  --lumo-shade-2pct: hsl(var(--base-h) calc(var(--base-s) * 0.1) 0% / 0.08);
+  --lumo-shade-5pct: hsl(var(--base-h) calc(var(--base-s) * 0.1) 0% / 0.1);
+  --lumo-shade-10pct: hsl(var(--base-h) calc(var(--base-s) * 0.1) 1% / 0.2);
+  --lumo-shade-20pct: hsl(var(--base-h) calc(var(--base-s) * 0.1) 1% / 0.3);
+  --lumo-shade-30pct: hsl(var(--base-h) calc(var(--base-s) * 0.1) 3% / 0.4);
+  --lumo-shade-40pct: hsl(var(--base-h) calc(var(--base-s) * 0.1) 4% / 0.5);
+  --lumo-shade-50pct: hsl(var(--base-h) calc(var(--base-s) * 0.1) 5% / 0.6);
+  --lumo-shade-60pct: hsl(var(--base-h) calc(var(--base-s) * 0.1) 5% / 0.7);
+  --lumo-shade-70pct: hsl(var(--base-h) calc(var(--base-s) * 0.11) 5% / 0.8);
+  --lumo-shade-80pct: hsl(var(--base-h) calc(var(--base-s) * 0.12) 5% / 0.9);
+  --lumo-shade-90pct: hsl(var(--base-h) calc(var(--base-s) * 0.13) 5% / 0.95);
+  --lumo-shade: hsl(var(--base-h) calc(var(--base-s) * 0.1) 5%);
+
+  --lumo-tint-5pct: hsl(var(--base-h) calc(var(--base-s) / 2) 65% / 0.06);
+  --lumo-tint-10pct: hsl(var(--base-h) calc(var(--base-s) / 2) 66% / 0.12);
+  --lumo-tint-20pct: hsl(var(--base-h) calc(var(--base-s) / 2) 67% / 0.18);
+  --lumo-tint-30pct: hsl(var(--base-h) calc(var(--base-s) / 2) 69% / 0.29);
+  --lumo-tint-40pct: hsl(var(--base-h) calc(var(--base-s) / 2) 71% / 0.4);
+  --lumo-tint-50pct: hsl(var(--base-h) calc(var(--base-s) / 2) 74% / 0.51);
+  --lumo-tint-60pct: hsl(var(--base-h) calc(var(--base-s) / 2) 80% / 0.62);
+  --lumo-tint-70pct: hsl(var(--base-h) calc(var(--base-s) / 2) 83% / 0.75);
+  --lumo-tint-80pct: hsl(var(--base-h) calc(var(--base-s) / 2) 87% / 0.9);
+  --lumo-tint-90pct: hsl(var(--base-h) calc(var(--base-s) / 2) 94% / 0.96);
+  --lumo-tint: hsl(var(--base-h) calc(var(--base-s) / 2) 99%);
+
+  --view-glow: radial-gradient(circle at 25% 0%, hsl(0 0% calc(30% + var(--base-l) * 4) / 0.1), transparent 50%);
+  --view-background: var(--view-glow), hsl(var(--base-h) var(--base-s) max(calc(var(--base-l) + 7%), 8%) / 0.7);
+  --view-background-clip: border-box;
+  --view-border-color: var(--lumo-contrast-10pct) var(--lumo-contrast-5pct) var(--lumo-contrast-5pct);
+}

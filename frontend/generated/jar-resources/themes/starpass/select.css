@@ -1,0 +1,27 @@
+vaadin-select vaadin-item::part(content) {
+  /* TODO seems like a missing property in Lumo */
+  min-width: 0;
+}
+
+vaadin-select.autosize {
+  --vaadin-field-default-width: auto;
+}
+
+vaadin-select.autosize vaadin-select-value-button {
+  width: auto;
+}
+
+vaadin-select.icon-only vaadin-item > :not(vaadin-icon)  {
+  display: none;
+}
+
+vaadin-select.borderless {
+  --vaadin-input-field-border-width: 0px;
+  --vaadin-input-field-background: transparent;
+}
+
+vaadin-select.borderless::part(input-field),
+vaadin-select.borderless vaadin-select-value-button,
+vaadin-select.borderless vaadin-item {
+  padding: 0;
+}

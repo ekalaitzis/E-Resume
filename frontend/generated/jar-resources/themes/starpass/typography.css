@@ -1,0 +1,27 @@
+:is(h1, h2, h3, h4, h5, h6) {
+    text-wrap: balance;
+}
+
+h1 {
+    font-weight: 850;
+    line-height: var(--lumo-line-height-xl);
+}
+
+:is(h2, h3) {
+    font-weight: 800;
+    line-height: var(--lumo-line-height-l);
+}
+
+h4 {
+    font-weight: 650;
+    line-height: var(--lumo-line-height-m);
+}
+
+:is(h5, h6) {
+    font-weight: 600;
+    line-height: var(--lumo-line-height-s);
+}
+
+a:where(:any-link) {
+    color: var(--accent-text);
+}
