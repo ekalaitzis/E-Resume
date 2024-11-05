@@ -3,7 +3,7 @@ WORKDIR /app
 COPY .mvn/ .mvn
 COPY mvnw pom.xml ./
 RUN chmod +x mvnw
-RUN --mount=type=cache,id=25859712-993c-4262-b321-dffbb28df743,target=/root/.m2 ./mvnw dependency:go-offline
+RUN --mount=type=cache,id=s/25859712-993c-4262-b321-dffbb28df743,target=/root/.m2 ./mvnw dependency:go-offline
 COPY src ./src
 RUN ./mvnw clean package -Pproduction -DskipTests
 
