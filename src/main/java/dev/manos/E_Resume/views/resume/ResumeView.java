@@ -117,7 +117,7 @@ public class ResumeView extends Composite<VerticalLayout> {
         horizontalLayoutWith3Grids.setFlexGrow(1, certificationDTOGrid);
 
         // Add components to the main layout
-        Button deleteAllResumesButton = new Button();
+        // Button deleteAllResumesButton = new Button();
 
         resumeGrid.addSelectionListener(selection -> {
             Optional<ResumeDTO> optionalResume = selection.getFirstSelectedItem();
@@ -133,11 +133,11 @@ public class ResumeView extends Composite<VerticalLayout> {
             }
         });
 
-        deleteAllResumesButton.setText("Delete all");
-        deleteAllResumesButton.setWidth("min-content");
-        deleteAllResumesButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        // deleteAllResumesButton.setText("Delete all");
+        // deleteAllResumesButton.setWidth("min-content");
+        // deleteAllResumesButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
-        card.add(header, horizontalLayoutResume, horizontalLayoutWith2Grids, horizontalLayoutWith3Grids, deleteAllResumesButton);
+        card.add(header, horizontalLayoutResume, horizontalLayoutWith2Grids, horizontalLayoutWith3Grids);
 
         VerticalLayout layout = getContent();
         layout.add(card);
