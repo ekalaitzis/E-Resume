@@ -5,7 +5,9 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -163,16 +165,39 @@ public class UploadView extends Composite<VerticalLayout> {
     }
 
     private void parseResume() {
-        String resumeText = textArea.getValue();
+//        String resumeText = textArea.getValue();
+//
+//        try {
+//            String response = restClient.post().uri("/resume/parse").contentType(MediaType.APPLICATION_JSON).body(resumeText).retrieve().body(String.class);
+//
+//            Notification.show("Resume parsed successfully");
+//        } catch (WebClientResponseException e) {
+//            Notification.show("Error parsing resume: " + e.getStatusCode());
+//        } catch (Exception e) {
+//            Notification.show("Unexpected error: " + e.getMessage());
+//        }
+        Dialog dialog = new Dialog();
+        dialog.setModal(true);
+        dialog.setDraggable(false);
 
-        try {
-            String response = restClient.post().uri("/resume/parse").contentType(MediaType.APPLICATION_JSON).body(resumeText).retrieve().body(String.class);
+        // Create content
+        VerticalLayout dialogLayout = new VerticalLayout();
+        dialogLayout.setPadding(true);
+        dialogLayout.setSpacing(true);
+        dialogLayout.setAlignItems(FlexComponent.Alignment.CENTER);
 
-            Notification.show("Resume parsed successfully");
-        } catch (WebClientResponseException e) {
-            Notification.show("Error parsing resume: " + e.getStatusCode());
-        } catch (Exception e) {
-            Notification.show("Unexpected error: " + e.getMessage());
-        }
+        // Add message
+        Span message = new Span("This function has been removed from the demo version of the website. Please contact the developer for more info.");
+
+        // Create and configure close button
+        Button closeButton = new Button("OK", event -> dialog.close());
+        closeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
+        // Add components to dialog
+        dialogLayout.add(message, closeButton);
+        dialog.add(dialogLayout);
+
+        // Open the dialog
+        dialog.open();
     }
 }
