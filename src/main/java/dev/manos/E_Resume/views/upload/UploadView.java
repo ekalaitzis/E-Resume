@@ -5,7 +5,9 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -16,14 +18,14 @@ import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import dev.manos.E_Resume.views.MainLayout;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.http.client.MultipartBodyBuilder;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,13 +34,17 @@ import java.io.InputStream;
 @Route(value = "", layout = MainLayout.class)
 public class UploadView extends Composite<VerticalLayout> {
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestClient restClient;
     private final TextArea textArea;
     private final Button parseButton;
     private final Button clearButton;
+    private final String baseUrl;
 
-    public UploadView() {
-        // Create main content card
+    @Autowired
+    public UploadView(@Value("${api.baseUrl}") String baseUrl) {
+        this.baseUrl = baseUrl;
+        this.restClient = RestClient.builder().baseUrl(this.baseUrl).build();
+
         VerticalLayout card = new VerticalLayout();
 
         card.getStyle().set("background-color", "rgba(255, 255, 255, 0.8)")  // 80% opacity white background
@@ -141,42 +147,57 @@ public class UploadView extends Composite<VerticalLayout> {
     }
 
     private String uploadFile(InputStream inputStream, String fileName) throws IOException {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        byte[] fileBytes = inputStream.readAllBytes();
 
-        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("file", new ByteArrayResource(inputStream.readAllBytes()) {
+        // Create a MultipartFile resource
+        Resource fileResource = new ByteArrayResource(fileBytes) {
             @Override
             public String getFilename() {
                 return fileName;
             }
-        });
+        };
 
-        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+        // Create the multipart form data
+        MultipartBodyBuilder builder = new MultipartBodyBuilder();
+        builder.part("file", fileResource).filename(fileName).contentType(MediaType.APPLICATION_OCTET_STREAM);
 
-        ResponseEntity<String> response = restTemplate.postForEntity("http://localhost:8080/documents/document", requestEntity, String.class);
-
-        if (response.getStatusCode().is2xxSuccessful()) {
-            return response.getBody();
-        } else {
-            throw new IOException("Error uploading file: " + response.getBody());
-        }
+        return restClient.post().uri("/documents/document").contentType(MediaType.MULTIPART_FORM_DATA).body(builder.build()).retrieve().body(String.class);
     }
 
     private void parseResume() {
-        String resumeText = textArea.getValue();
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+//        String resumeText = textArea.getValue();
+//
+//        try {
+//            String response = restClient.post().uri("/resume/parse").contentType(MediaType.APPLICATION_JSON).body(resumeText).retrieve().body(String.class);
+//
+//            Notification.show("Resume parsed successfully");
+//        } catch (WebClientResponseException e) {
+//            Notification.show("Error parsing resume: " + e.getStatusCode());
+//        } catch (Exception e) {
+//            Notification.show("Unexpected error: " + e.getMessage());
+//        }
+        Dialog dialog = new Dialog();
+        dialog.setModal(true);
+        dialog.setDraggable(false);
 
-        HttpEntity<String> request = new HttpEntity<>(resumeText, headers);
-        ResponseEntity<String> response = restTemplate.postForEntity("http://localhost:8080/resume/parse", request, String.class);
+        // Create content
+        VerticalLayout dialogLayout = new VerticalLayout();
+        dialogLayout.setPadding(true);
+        dialogLayout.setSpacing(true);
+        dialogLayout.setAlignItems(FlexComponent.Alignment.CENTER);
 
-        if (response.getStatusCode().is2xxSuccessful()) {
-            Notification.show("Resume parsed successfully");
-            // Here you can handle the parsed resume data
-        } else {
-            Notification.show("Error parsing resume");
-        }
+        // Add message
+        Span message = new Span("This function has been removed from the demo version of the website. Please contact the developer for more info.");
+
+        // Create and configure close button
+        Button closeButton = new Button("OK", event -> dialog.close());
+        closeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
+        // Add components to dialog
+        dialogLayout.add(message, closeButton);
+        dialog.add(dialogLayout);
+
+        // Open the dialog
+        dialog.open();
     }
 }
