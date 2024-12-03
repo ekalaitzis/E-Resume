@@ -16,6 +16,12 @@ DROP TABLE IF EXISTS gender CASCADE;
 DROP TABLE IF EXISTS resume CASCADE;
 DROP TABLE IF EXISTS scored_resume CASCADE;
 DROP TABLE IF EXISTS document CASCADE;
+DROP TABLE IF EXISTS vacancy CASCADE;
+DROP TYPE IF EXISTS employment_type_enum CASCADE;
+DROP TYPE IF EXISTS work_mode_enum CASCADE;
+DROP TYPE IF EXISTS experience_level_enum CASCADE;
+DROP TYPE IF EXISTS vacancy_status_enum CASCADE;
+
 
 
 -- Drop sequences if they exist
@@ -29,11 +35,93 @@ DROP SEQUENCE IF EXISTS volunteer_seq;
 DROP SEQUENCE IF EXISTS work_experience_seq;
 DROP SEQUENCE IF EXISTS gender_seq;
 DROP SEQUENCE IF EXISTS document_seq;
+DROP SEQUENCE IF EXISTS vacancy_seq;
+
 
 
 ---------------------------------------
 --  Creation of Tables  --
 ---------------------------------------
+
+-- Vacancy Table
+CREATE TABLE vacancy (
+                         id SERIAL PRIMARY KEY,
+                         vacancy_name VARCHAR(255) NOT NULL,
+                         employment_type employment_type_enum,
+                         work_mode work_mode_enum,
+                         experience_level experience_level_enum,
+                         status vacancy_status_enum NOT NULL DEFAULT 'OPEN',
+                         location VARCHAR(255),
+                         salary_range VARCHAR(100),
+                         description TEXT,
+                         post_date DATE,
+                         CONSTRAINT chk_status CHECK (status IN ('OPEN', 'CLOSED', 'ON_HOLD', 'FILLED'))
+);
+
+CREATE SEQUENCE vacancy_seq;
+
+-- Add comments for vacancy table
+COMMENT ON TABLE vacancy IS 'Table to store job vacancy details';
+COMMENT ON COLUMN vacancy.vacancy_name IS 'Title or name of the job vacancy';
+COMMENT ON COLUMN vacancy.employment_type IS 'Type of employment (full-time, part-time, etc.)';
+COMMENT ON COLUMN vacancy.work_mode IS 'Work mode of the position (remote, hybrid, on-site)';
+COMMENT ON COLUMN vacancy.experience_level IS 'Required experience level for the position';
+COMMENT ON COLUMN vacancy.status IS 'Current status of the vacancy';
+COMMENT ON COLUMN vacancy.location IS 'Physical location or region for the position';
+COMMENT ON COLUMN vacancy.salary_range IS 'Expected salary range for the position';
+COMMENT ON COLUMN vacancy.description IS 'Detailed description of the vacancy including requirements';
+COMMENT ON COLUMN vacancy.post_date IS 'Date when the vacancy was posted';
+
+-- Create join table for resume-vacancy relationship (many-to-many)
+CREATE TABLE resume_vacancy (
+                                resume_id INTEGER NOT NULL,
+                                vacancy_id INTEGER NOT NULL,
+                                application_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                status VARCHAR(50) DEFAULT 'PENDING',
+                                CONSTRAINT pk_resume_vacancy PRIMARY KEY (resume_id, vacancy_id),
+                                CONSTRAINT fk_resume FOREIGN KEY (resume_id) REFERENCES resume(id) ON DELETE CASCADE,
+                                CONSTRAINT fk_vacancy FOREIGN KEY (vacancy_id) REFERENCES vacancy(id) ON DELETE CASCADE
+);
+
+COMMENT ON TABLE resume_vacancy IS 'Junction table for managing resume applications to vacancies';
+COMMENT ON COLUMN resume_vacancy.resume_id IS 'ID of the resume';
+COMMENT ON COLUMN resume_vacancy.vacancy_id IS 'ID of the vacancy';
+COMMENT ON COLUMN resume_vacancy.application_date IS 'Date when the resume was submitted for this vacancy';
+COMMENT ON COLUMN resume_vacancy.status IS 'Status of the application';
+
+-- Create employment type enum
+CREATE TYPE employment_type_enum AS ENUM (
+    'FULL_TIME',
+    'PART_TIME',
+    'CONTRACT',
+    'INTERNSHIP',
+    'TEMPORARY'
+    );
+
+-- Create work mode enum
+CREATE TYPE work_mode_enum AS ENUM (
+    'REMOTE',
+    'HYBRID',
+    'ON_SITE'
+    );
+
+-- Create experience level enum
+CREATE TYPE experience_level_enum AS ENUM (
+    'ENTRY',
+    'JUNIOR',
+    'MID',
+    'SENIOR',
+    'LEAD',
+    'PRINCIPAL'
+    );
+
+-- Create vacancy status enum
+CREATE TYPE vacancy_status_enum AS ENUM (
+    'OPEN',
+    'CLOSED',
+    'ON_HOLD',
+    'FILLED'
+    );
 
 -- Resume Table
 CREATE TABLE resume

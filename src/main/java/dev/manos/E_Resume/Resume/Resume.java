@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 import dev.manos.E_Resume.Certification.Certification;
 import dev.manos.E_Resume.Education.Education;
 import dev.manos.E_Resume.Project.Project;
+import dev.manos.E_Resume.Vacancy.Vacancy;
 import dev.manos.E_Resume.Volunteer.VolunteerWork;
 import dev.manos.E_Resume.WorkExperience.WorkExperience;
 import io.swagger.annotations.ApiModelProperty;
@@ -32,6 +33,10 @@ public class Resume {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "resume_seq")
     @SequenceGenerator(name = "resume_seq", sequenceName = "resume_seq", allocationSize = 1)
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "vacancy_id", foreignKey = @ForeignKey(name = "fk_vacancy"))
+    private Vacancy vacancy;
 
     @ApiModelProperty(value = "First name of the person", example = "John")
     @Column(name = "first_name", nullable = false)
