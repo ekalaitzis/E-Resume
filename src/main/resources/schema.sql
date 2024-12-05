@@ -2,10 +2,8 @@
 --  Dropping existing Database Tables  --
 ---------------------------------------
 DROP TABLE IF EXISTS certification CASCADE;
-DROP
-TYPE IF EXISTS degree_type_enum CASCADE;
-DROP
-TYPE IF EXISTS gender_enum CASCADE;
+DROP TYPE IF EXISTS degree_type_enum CASCADE;
+DROP TYPE IF EXISTS gender_enum CASCADE;
 DROP TABLE IF EXISTS volunteer CASCADE;
 DROP TABLE IF EXISTS project CASCADE;
 DROP TABLE IF EXISTS resume_languages CASCADE;
@@ -17,6 +15,7 @@ DROP TABLE IF EXISTS resume CASCADE;
 DROP TABLE IF EXISTS scored_resume CASCADE;
 DROP TABLE IF EXISTS document CASCADE;
 DROP TABLE IF EXISTS vacancy CASCADE;
+DROP TABLE IF EXISTS resume_vacancy CASCADE;
 DROP TYPE IF EXISTS employment_type_enum CASCADE;
 DROP TYPE IF EXISTS work_mode_enum CASCADE;
 DROP TYPE IF EXISTS experience_level_enum CASCADE;
@@ -42,54 +41,6 @@ DROP SEQUENCE IF EXISTS vacancy_seq;
 ---------------------------------------
 --  Creation of Tables  --
 ---------------------------------------
-
--- Vacancy Table
-CREATE TABLE vacancy (
-                         id SERIAL PRIMARY KEY,
-                         vacancy_name VARCHAR(255) NOT NULL,
-                         employment_type employment_type_enum,
-                         work_mode work_mode_enum,
-                         experience_level experience_level_enum,
-                         status vacancy_status_enum NOT NULL DEFAULT 'OPEN',
-                         location VARCHAR(255),
-                         salary_range VARCHAR(100),
-                         description TEXT,
-                         post_date DATE,
-                         CONSTRAINT chk_status CHECK (status IN ('OPEN', 'CLOSED', 'ON_HOLD', 'FILLED'))
-);
-
-CREATE SEQUENCE vacancy_seq;
-
--- Add comments for vacancy table
-COMMENT ON TABLE vacancy IS 'Table to store job vacancy details';
-COMMENT ON COLUMN vacancy.vacancy_name IS 'Title or name of the job vacancy';
-COMMENT ON COLUMN vacancy.employment_type IS 'Type of employment (full-time, part-time, etc.)';
-COMMENT ON COLUMN vacancy.work_mode IS 'Work mode of the position (remote, hybrid, on-site)';
-COMMENT ON COLUMN vacancy.experience_level IS 'Required experience level for the position';
-COMMENT ON COLUMN vacancy.status IS 'Current status of the vacancy';
-COMMENT ON COLUMN vacancy.location IS 'Physical location or region for the position';
-COMMENT ON COLUMN vacancy.salary_range IS 'Expected salary range for the position';
-COMMENT ON COLUMN vacancy.description IS 'Detailed description of the vacancy including requirements';
-COMMENT ON COLUMN vacancy.post_date IS 'Date when the vacancy was posted';
-
--- Create join table for resume-vacancy relationship (many-to-many)
-CREATE TABLE resume_vacancy (
-                                resume_id INTEGER NOT NULL,
-                                vacancy_id INTEGER NOT NULL,
-                                application_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                                status VARCHAR(50) DEFAULT 'PENDING',
-                                CONSTRAINT pk_resume_vacancy PRIMARY KEY (resume_id, vacancy_id),
-                                CONSTRAINT fk_resume FOREIGN KEY (resume_id) REFERENCES resume(id) ON DELETE CASCADE,
-                                CONSTRAINT fk_vacancy FOREIGN KEY (vacancy_id) REFERENCES vacancy(id) ON DELETE CASCADE
-);
-
-COMMENT ON TABLE resume_vacancy IS 'Junction table for managing resume applications to vacancies';
-COMMENT ON COLUMN resume_vacancy.resume_id IS 'ID of the resume';
-COMMENT ON COLUMN resume_vacancy.vacancy_id IS 'ID of the vacancy';
-COMMENT ON COLUMN resume_vacancy.application_date IS 'Date when the resume was submitted for this vacancy';
-COMMENT ON COLUMN resume_vacancy.status IS 'Status of the application';
-
--- Create employment type enum
 CREATE TYPE employment_type_enum AS ENUM (
     'FULL_TIME',
     'PART_TIME',
@@ -123,10 +74,38 @@ CREATE TYPE vacancy_status_enum AS ENUM (
     'FILLED'
     );
 
+CREATE TABLE vacancy (
+                         id SERIAL PRIMARY KEY,
+                         vacancy_name VARCHAR(255) NOT NULL,
+                         employment_type employment_type_enum,
+                         work_mode work_mode_enum,
+                         experience_level experience_level_enum,
+                         status vacancy_status_enum NOT NULL DEFAULT 'OPEN',
+                         location VARCHAR(255),
+                         salary_range VARCHAR(100),
+                         description TEXT,
+                         post_date DATE
+);
+
+CREATE SEQUENCE vacancy_seq;
+
+COMMENT ON TABLE vacancy IS 'Table to store job vacancy details';
+COMMENT ON COLUMN vacancy.vacancy_name IS 'Title or name of the job vacancy';
+COMMENT ON COLUMN vacancy.employment_type IS 'Type of employment (full-time, part-time, etc.)';
+COMMENT ON COLUMN vacancy.work_mode IS 'Work mode of the position (remote, hybrid, on-site)';
+COMMENT ON COLUMN vacancy.experience_level IS 'Required experience level for the position';
+COMMENT ON COLUMN vacancy.status IS 'Current status of the vacancy';
+COMMENT ON COLUMN vacancy.location IS 'Physical location or region for the position';
+COMMENT ON COLUMN vacancy.salary_range IS 'Expected salary range for the position';
+COMMENT ON COLUMN vacancy.description IS 'Detailed description of the vacancy including requirements';
+COMMENT ON COLUMN vacancy.post_date IS 'Date when the vacancy was posted';
+
+
 -- Resume Table
 CREATE TABLE resume
 (
     id                   SERIAL PRIMARY KEY,
+    vacancy_id           INTEGER,
     first_name           VARCHAR(255) NOT NULL,
     last_name            VARCHAR(255) NOT NULL,
     email                VARCHAR(100) NOT NULL,
@@ -138,13 +117,18 @@ CREATE TABLE resume
     telephone            VARCHAR(14)  ,
     address              VARCHAR(255) ,
     work_permit_required BOOLEAN DEFAULT FALSE,
-    visa_required        BOOLEAN DEFAULT FALSE
+    visa_required        BOOLEAN DEFAULT FALSE,
+    CONSTRAINT fk_vacancy
+        FOREIGN KEY (vacancy_id)
+            REFERENCES vacancy(id)
+            ON DELETE CASCADE
 );
 
 CREATE SEQUENCE resume_seq;
 
 -- Add comments for resume table
 COMMENT ON TABLE resume IS 'Table to store personal and contact details of the person.';
+COMMENT ON COLUMN resume.vacancy_id IS 'Foreign key reference to the vacancy the resume is submitted for';
 COMMENT ON COLUMN resume.first_name IS 'First name of the person';
 COMMENT ON COLUMN resume.last_name IS 'Last name of the person';
 COMMENT ON COLUMN resume.email IS 'Email address of the person';
@@ -183,7 +167,6 @@ CREATE TYPE gender_enum AS ENUM (
     'MALE',
     'FEMALE'
     );
-
 
 -- Resume Work Experience Table
 CREATE TABLE work_experience
