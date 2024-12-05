@@ -29,10 +29,9 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import java.io.IOException;
 import java.io.InputStream;
-
-@PageTitle("Upload")
+@PageTitle("Upload Resume")
 @Route(value = "", layout = MainLayout.class)
-public class UploadView extends Composite<VerticalLayout> {
+public class UploadView extends VerticalLayout {
 
     private final RestClient restClient;
     private final TextArea textArea;
@@ -44,23 +43,6 @@ public class UploadView extends Composite<VerticalLayout> {
     public UploadView(@Value("${api.baseUrl}") String baseUrl) {
         this.baseUrl = baseUrl;
         this.restClient = RestClient.builder().baseUrl(this.baseUrl).build();
-
-        VerticalLayout card = new VerticalLayout();
-
-        card.getStyle().set("background-color", "rgba(255, 255, 255, 0.8)")  // 80% opacity white background
-                .set("margin", "20px").set("max-width", "calc(100% - 50px)").set("box-sizing", "border-box");
-
-        card.addClassName("content-card");
-
-        card.setWidthFull();
-        card.setHeightFull();
-        card.getStyle().set("margin", "20px")  // 10px spacing from all sides
-                .set("max-width", "calc(100% - 50px)")  // Account for margins
-                .set("box-sizing", "border-box");
-
-        // Create header section
-        H1 header = new H1("Upload Resume");
-        header.getStyle().set("margin", "0").set("padding", "var(--lumo-space-m) var(--lumo-space-m) 0");
 
         // Create components
         MemoryBuffer buffer = new MemoryBuffer();
@@ -78,16 +60,8 @@ public class UploadView extends Composite<VerticalLayout> {
         buttonLayout.setPadding(true);
         buttonLayout.getStyle().set("margin-top", "var(--lumo-space-m)");
 
-        // Add components to card
-        card.add(header, createSection(upload), createSection(textArea), buttonLayout);
-
-        // Add card to main layout
-        VerticalLayout layout = getContent();
-        layout.add(card);
-        layout.setAlignItems(FlexComponent.Alignment.CENTER); // Center the card
-        layout.setPadding(false);
-        layout.setSpacing(false);
-        layout.setSizeFull();  // Make the main layout take full space
+        // Add components directly to the view
+        add(createSection(upload), createSection(textArea), buttonLayout);
     }
 
     private Upload createUpload(MemoryBuffer buffer) {
@@ -165,39 +139,16 @@ public class UploadView extends Composite<VerticalLayout> {
     }
 
     private void parseResume() {
-//        String resumeText = textArea.getValue();
-//
-//        try {
-//            String response = restClient.post().uri("/resume/parse").contentType(MediaType.APPLICATION_JSON).body(resumeText).retrieve().body(String.class);
-//
-//            Notification.show("Resume parsed successfully");
-//        } catch (WebClientResponseException e) {
-//            Notification.show("Error parsing resume: " + e.getStatusCode());
-//        } catch (Exception e) {
-//            Notification.show("Unexpected error: " + e.getMessage());
-//        }
-        Dialog dialog = new Dialog();
-        dialog.setModal(true);
-        dialog.setDraggable(false);
+        String resumeText = textArea.getValue();
 
-        // Create content
-        VerticalLayout dialogLayout = new VerticalLayout();
-        dialogLayout.setPadding(true);
-        dialogLayout.setSpacing(true);
-        dialogLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+        try {
+            String response = restClient.post().uri("/resume/parse").contentType(MediaType.APPLICATION_JSON).body(resumeText).retrieve().body(String.class);
 
-        // Add message
-        Span message = new Span("This function has been removed from the demo version of the website. Please contact the developer for more info.");
-
-        // Create and configure close button
-        Button closeButton = new Button("OK", event -> dialog.close());
-        closeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-
-        // Add components to dialog
-        dialogLayout.add(message, closeButton);
-        dialog.add(dialogLayout);
-
-        // Open the dialog
-        dialog.open();
+            Notification.show("Resume parsed successfully");
+        } catch (WebClientResponseException e) {
+            Notification.show("Error parsing resume: " + e.getStatusCode());
+        } catch (Exception e) {
+            Notification.show("Unexpected error: " + e.getMessage());
+        }
     }
 }
