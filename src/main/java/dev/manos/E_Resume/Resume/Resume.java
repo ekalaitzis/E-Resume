@@ -34,8 +34,8 @@ public class Resume {
     @SequenceGenerator(name = "resume_seq", sequenceName = "resume_seq", allocationSize = 1)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "vacancy_id", foreignKey = @ForeignKey(name = "fk_vacancy"))
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vacancy_id")
     private Vacancy vacancy;
 
     @ApiModelProperty(value = "First name of the person", example = "John")

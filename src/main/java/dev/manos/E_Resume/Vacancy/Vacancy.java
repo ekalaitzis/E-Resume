@@ -73,15 +73,22 @@ public class Vacancy {
     private String description;
 
     @ApiModelProperty(value = "Post date of the Vacancy", example = "2026-01-01T00:00:00Z")
-    @Column(name = "date", nullable = true)
+    @Column(name = "post_date", nullable = true)
     @JsonDeserialize(using = CustomDateDeserializer.class)
     private LocalDate postDate;
 
     @OneToMany(mappedBy = "vacancy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonBackReference
-    private List<Resume> resume;
+    private List<Resume> resumes;
 
 
 
     //Maybe I should add hard and soft requirements
+
+
+    @PrePersist
+    protected void onCreate() {
+        postDate = LocalDate.now();
+    }
+
 }
