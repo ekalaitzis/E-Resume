@@ -9,10 +9,10 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.icon.SvgIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -24,6 +24,7 @@ import com.vaadin.flow.component.tabs.TabSheetVariant;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.RouterLayout;
+import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import dev.manos.E_Resume.Vacancy.*;
@@ -39,6 +40,7 @@ import java.util.Optional;
 //@Route("")
 //@PageTitle("Main Layout")
 //@SpringComponent
+
 public class MainLayout extends HorizontalLayout implements RouterLayout {
     private final VerticalLayout contentContainer;
     @Autowired
@@ -50,25 +52,44 @@ public class MainLayout extends HorizontalLayout implements RouterLayout {
         setSpacing(false);
         setPadding(false);
 
-        // Create a vertical container for the left side
+        // Create the main card that will contain everything
+        VerticalLayout mainCard = new VerticalLayout();
+        mainCard.addClassName("content-card");
+        mainCard.getStyle().set("background-color", "rgba(255, 255, 255, 0.8)").set("margin", "20px").set("box-sizing", "border-box").set("width", "calc(100% - 40px)") // Adjust margins on both sides
+                .set("height", "calc(100% - 40px)"); // Adjust margins on top and bottom
+
+        // Create horizontal layout to hold sidebar and content
+        HorizontalLayout contentWrapper = new HorizontalLayout();
+        contentWrapper.setSizeFull();
+        contentWrapper.setSpacing(false);
+        contentWrapper.setPadding(false);
+
+        // Create left container for sidebar
         VerticalLayout leftContainer = new VerticalLayout();
         leftContainer.setSpacing(false);
         leftContainer.setPadding(false);
-        leftContainer.setWidth("350px"); // Match the sidebar width
+        leftContainer.setWidth("350px");
         leftContainer.setHeight("100%");
+        leftContainer.getStyle().set("margin", "0").set("gap", "0").set("border-right", "1px solid var(--lumo-contrast-10pct)"); // Add separator
 
-        // Remove any extra margins
-        leftContainer.getStyle().set("margin", "0").set("gap", "0");
         // Add components to the left container
-        VerticalLayout addVacancySection = addNewVacancyFunction();
         VerticalLayout sidebar = createSidebar();
-        leftContainer.add(addVacancySection, sidebar);
+        leftContainer.add(sidebar);
 
-        // Create the content container
+        // Setup content container
         contentContainer = new VerticalLayout();
+        contentContainer.setSizeFull();
+        contentContainer.setPadding(true);
+        contentContainer.setSpacing(false);
 
-        // Add everything to the main horizontal layout
-        add(leftContainer, contentContainer);
+        // Add everything to the wrapper
+        contentWrapper.add(leftContainer, contentContainer);
+
+        // Add the wrapper to the main card
+        mainCard.add(contentWrapper);
+
+        // Add the main card to the layout
+        add(mainCard);
     }
 
     private static FlexLayout createCard(String heading, Component... components) {
@@ -113,46 +134,27 @@ public class MainLayout extends HorizontalLayout implements RouterLayout {
         VerticalLayout sidebar = new VerticalLayout();
         sidebar.addClassName("sidebar");
 
+
         // Create vacancy grid
         vacancyGrid = new Grid<>(VacancyDTO.class, false);
         configureVacancyGrid(vacancyGrid);
         setVacancyGridSampleData(vacancyGrid);
-        vacancyGrid.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT);
+
+        vacancyGrid.addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_WRAP_CELL_CONTENT, GridVariant.LUMO_NO_BORDER);
+
+        vacancyGrid.setClassNameGenerator(item -> {
+            vacancyGrid.getStyle().set("--vaadin-grid-cell-background", "transparent");
+            return "";
+        });
+
+        vacancyGrid.getStyle().set("background-color", "rgba(255, 255, 255, 0)");
+
+        sidebar.getStyle().set("background", "rgba(0, 0, 0, 0.8)").set("padding", "0").set("margin", "0").set("box-sizing", "border-box").set("z-index", "1");
+
         sidebar.add(vacancyGrid);
         sidebar.setWidth("350px"); // Wider to accommodate the grid
         sidebar.setHeightFull();
         return sidebar;
-    }
-
-    private VerticalLayout addNewVacancyFunction() {
-        VerticalLayout container = new VerticalLayout();
-        container.setWidth("200px");
-
-        Dialog dialog = new Dialog();
-        dialog.setHeaderTitle("Add new vacancy");
-        VerticalLayout dialogLayout = createDialogLayout();
-        dialog.add(dialogLayout);
-
-        Button saveButton = createAddButton(dialog, dialogLayout);
-        Button cancelButton = new Button("Cancel", e -> {
-            clearDialogFields(dialogLayout);
-            dialog.close();
-        });
-
-        dialog.getFooter().add(cancelButton);
-        dialog.getFooter().add(saveButton);
-
-        // Clear fields when dialog is opened
-        Button addVacancyButton = new Button("Add Vacancy", e -> {
-            clearDialogFields(dialogLayout);
-            dialog.open();
-        });
-
-        container.add(addVacancyButton);
-
-        container.getStyle().set("padding", "1rem").set("display", "flex").set("align-items", "start").set("justify-content", "center");
-
-        return container;
     }
 
     private Button createAddButton(Dialog dialog, VerticalLayout dialogLayout) {
@@ -206,7 +208,6 @@ public class MainLayout extends HorizontalLayout implements RouterLayout {
         return addButton;
     }
 
-
     private void clearDialogFields(VerticalLayout dialogLayout) {
         dialogLayout.getChildren().forEach(component -> {
             if (component instanceof TextField) {
@@ -229,17 +230,65 @@ public class MainLayout extends HorizontalLayout implements RouterLayout {
         vacancyService.deleteVacancy(VacancyId);
     }
 
-
-
     private void configureVacancyGrid(Grid<VacancyDTO> grid) {
-        //edit button
-        grid.addComponentColumn(vacancy -> {
-            Button editButton = new Button(new Icon(VaadinIcon.EDIT));
+        grid.addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_WRAP_CELL_CONTENT);
+
+        // Header row with title and add button
+        HeaderRow headerRow = grid.prependHeaderRow();
+
+        // Create the add button with larger icon
+        Button addVacancyButton = new Button();
+        StreamResource plusIconResource = new StreamResource("plus.svg", () -> getClass().getResourceAsStream("/icons/plus.svg"));
+        SvgIcon plusIcon = new SvgIcon(plusIconResource);
+        plusIcon.setSize("1.5em");  // Increase icon size
+        addVacancyButton.setIcon(plusIcon);
+        addVacancyButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ICON);
+
+        // Create the dialog for adding new vacancy
+        Dialog dialog = new Dialog();
+        dialog.setHeaderTitle("Add new vacancy");
+        VerticalLayout dialogLayout = createDialogLayout();
+        dialog.add(dialogLayout);
+
+        Button saveButton = createAddButton(dialog, dialogLayout);
+        Button cancelButton = new Button("Cancel", e -> {
+            clearDialogFields(dialogLayout);
+            dialog.close();
+        });
+
+        dialog.getFooter().add(cancelButton);
+        dialog.getFooter().add(saveButton);
+
+        addVacancyButton.addClickListener(e -> {
+            clearDialogFields(dialogLayout);
+            dialog.open();
+        });
+
+        // Create styled header text
+        H3 headerText = new H3("Vacancies");
+        headerText.getStyle().set("font-family", "Roboto, sans-serif").set("font-weight", "bold").set("margin", "0");  // Remove default margins
+
+        // Add the vacancy name column with styled header
+        Grid.Column<VacancyDTO> nameColumn = grid.addColumn(VacancyDTO::getVacancyName).setHeader(headerText).setAutoWidth(true);
+
+        // Add edit button column
+        Grid.Column<VacancyDTO> editColumn = grid.addComponentColumn(vacancy -> {
+            StreamResource editIconResource = new StreamResource("edit.svg", () -> getClass().getResourceAsStream("/icons/edit.svg"));
+            SvgIcon editIcon = new SvgIcon(editIconResource);
+            editIcon.setSize("1.2em");  // Slightly increase edit icon size for consistency
+            Button editButton = new Button(editIcon);
+            editButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ICON);
             editButton.addClickListener(e -> openEditDialog(vacancy));
             return editButton;
-        });
-        //vacancy name
-        grid.addColumn(VacancyDTO::getVacancyName).setHeader("Vacancies").setAutoWidth(true);
+        }).setWidth("3em").setFlexGrow(0);  // Adjusted width as requested
+
+        // Create header layout for the edit column with just the add button
+        HorizontalLayout editHeaderLayout = new HorizontalLayout(addVacancyButton);
+        editHeaderLayout.setJustifyContentMode(JustifyContentMode.CENTER);
+        editHeaderLayout.setWidth("100%");
+
+        // Set the add button in the header above the edit column
+        headerRow.getCell(editColumn).setComponent(editHeaderLayout);
     }
 
     private void openEditDialog(VacancyDTO vacancyDTO) {
@@ -252,23 +301,34 @@ public class MainLayout extends HorizontalLayout implements RouterLayout {
 
         // Pre-fill form fields
         dialogLayout.getChildren().forEach(component -> {
-            if (component instanceof TextField) {
-                TextField field = (TextField) component;
+            if (component instanceof TextField field) {
                 switch (field.getLabel()) {
-                    case "Vacancy name": field.setValue(vacancyDTO.getVacancyName()); break;
-                    case "Location": field.setValue(vacancy.get().getLocation()); break;
-                    case "Salary": field.setValue(vacancy.get().getSalaryRange()); break;
+                    case "Vacancy name":
+                        field.setValue(vacancyDTO.getVacancyName());
+                        break;
+                    case "Location":
+                        field.setValue(vacancy.get().getLocation());
+                        break;
+                    case "Salary":
+                        field.setValue(vacancy.get().getSalaryRange());
+                        break;
                 }
-            } else if (component instanceof ComboBox) {
-                ComboBox comboBox = (ComboBox) component;
+            } else if (component instanceof ComboBox comboBox) {
                 switch (comboBox.getLabel()) {
-                    case "Employment type": comboBox.setValue(vacancy.get().getEmploymentType()); break;
-                    case "Work mode": comboBox.setValue(vacancy.get().getWorkMode()); break;
-                    case "Experience level ": comboBox.setValue(vacancy.get().getExperienceLevel()); break;
-                    case "Status": comboBox.setValue(vacancy.get().getStatus()); break;
+                    case "Employment type":
+                        comboBox.setValue(vacancy.get().getEmploymentType());
+                        break;
+                    case "Work mode":
+                        comboBox.setValue(vacancy.get().getWorkMode());
+                        break;
+                    case "Experience level ":
+                        comboBox.setValue(vacancy.get().getExperienceLevel());
+                        break;
+                    case "Status":
+                        comboBox.setValue(vacancy.get().getStatus());
+                        break;
                 }
-            } else if (component instanceof TextArea) {
-                TextArea area = (TextArea) component;
+            } else if (component instanceof TextArea area) {
                 if ("Description".equals(area.getLabel())) {
                     area.setValue(vacancy.get().getDescription());
                 }
@@ -282,9 +342,8 @@ public class MainLayout extends HorizontalLayout implements RouterLayout {
             confirmDelete(vacancy);
             dialog.close();
 
-                });
-        deleteButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY,
-                ButtonVariant.LUMO_ERROR);
+        });
+        deleteButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
         deleteButton.getStyle().set("margin-right", "auto");
         dialog.getFooter().add(deleteButton);
 
@@ -299,17 +358,15 @@ public class MainLayout extends HorizontalLayout implements RouterLayout {
     private void confirmDelete(Optional<Vacancy> vacancy) {
         Dialog deleteDialog = new Dialog();
 
-        deleteDialog.setHeaderTitle(
-                String.format("Delete vacancy \"%s\"?", vacancy.get().getVacancyName()));
+        deleteDialog.setHeaderTitle(String.format("Delete vacancy \"%s\"?", vacancy.get().getVacancyName()));
         deleteDialog.add("Are you sure you want to delete this vacancy permanently?");
 
-        Button permdDeleteButton = new Button("Delete", (e) ->{
+        Button permdDeleteButton = new Button("Delete", (e) -> {
             deleteVacancy(vacancy.get().getId());
             refreshGrid();
             deleteDialog.close();
         });
-        permdDeleteButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY,
-                ButtonVariant.LUMO_ERROR);
+        permdDeleteButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
         permdDeleteButton.getStyle().set("margin-right", "auto");
         deleteDialog.getFooter().add(permdDeleteButton);
 
@@ -360,49 +417,39 @@ public class MainLayout extends HorizontalLayout implements RouterLayout {
                 refreshGrid();
                 dialog.close();
             } catch (Exception ex) {
-                Notification.show("Error updating vacancy: " + ex.getMessage(), 3000, Notification.Position.TOP_CENTER)
-                        .addThemeVariants(NotificationVariant.LUMO_ERROR);
+                Notification.show("Error updating vacancy: " + ex.getMessage(), 3000, Notification.Position.TOP_CENTER).addThemeVariants(NotificationVariant.LUMO_ERROR);
             }
         });
 
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         return saveButton;
     }
+
     @Override
     public void showRouterLayoutContent(HasElement content) {
+        // Clear previous content
         contentContainer.removeAll();
-
-        VerticalLayout card = createCommonCard();
-
-        card.setAlignItems(FlexComponent.Alignment.CENTER);
 
         if (content != null && content.getElement().getComponent().isPresent()) {
             Component contentComponent = content.getElement().getComponent().get();
 
-            card.add(createTabs());
-            card.add(contentComponent);
+            VerticalLayout contentWrapper = new VerticalLayout();
+            contentWrapper.setSizeFull();
+            contentWrapper.setPadding(false);
+            contentWrapper.setSpacing(false);
+            contentWrapper.setAlignItems(FlexComponent.Alignment.CENTER); // Centers children horizontally
 
-            contentComponent.getElement().getStyle().set("width", "100%");
+            contentWrapper.add(createTabs());
+            contentWrapper.add(contentComponent);
+
+            contentContainer.add(contentWrapper);
         }
-
-        contentContainer.add(card);
-        // Center the card in the container
-        contentContainer.setAlignItems(FlexComponent.Alignment.CENTER);
-        contentContainer.setJustifyContentMode(JustifyContentMode.CENTER);
-    }
-
-    private VerticalLayout createCommonCard() {
-        VerticalLayout card = new VerticalLayout();
-        card.addClassName("content-card");
-        card.getStyle().set("background-color", "rgba(255, 255, 255, 0.8)").set("margin", "20px").set("max-width", "calc(100% - 50px)").set("box-sizing", "border-box");
-        card.setWidthFull();
-        card.setHeightFull();
-        return card;
     }
 
     private Component createTabs() {
         TabSheet tabSheet = new TabSheet();
         tabSheet.addThemeVariants(TabSheetVariant.LUMO_BORDERED, TabSheetVariant.LUMO_TABS_CENTERED);
+
         tabSheet.add("Upload", new Div());
         tabSheet.add("Resume", new Div());
         tabSheet.add("Scored", new Div());
