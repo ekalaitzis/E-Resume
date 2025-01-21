@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
 public interface ResumeRepository extends JpaRepository<Resume, Long> {
 
     Page<Resume> findAll(Specification<Resume> filter, Pageable pageable);
+
+    Page<Resume> findByVacancyId(Long vacancyId, Pageable pageable);
 }

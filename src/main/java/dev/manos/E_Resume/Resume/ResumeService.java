@@ -15,10 +15,12 @@ import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.converter.BeanOutputConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -137,5 +139,13 @@ public class ResumeService {
         return resumeRepository.findAll(filter, pageable);
     }
 
+    public Page<ResumeDTO> listResumesByVacancyAsDTO(Long vacancyId, Pageable pageable) {
+        return resumeRepository.findByVacancyId(vacancyId, pageable)
+                .map(ResumeDTO::fromEntity);
+    }
 
+    public Page<ResumeDTO> listResumesByVacancy(Long vacancyId, Pageable pageable) {
+        return resumeRepository.findByVacancyId(vacancyId, pageable)
+                .map(ResumeDTO::fromEntity);
+    }
 }
