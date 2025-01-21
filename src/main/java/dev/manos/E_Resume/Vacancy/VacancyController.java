@@ -48,4 +48,10 @@ public class VacancyController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @DeleteMapping("delete")
+    public ResponseEntity<Void> deleteAllVacancies() {
+        vacancyService.deleteAllVacancies();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 }

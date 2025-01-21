@@ -8,6 +8,7 @@ import dev.manos.E_Resume.Resume.Resume;
 import dev.manos.E_Resume.Resume.Util.CustomDateDeserializer;
 import io.swagger.annotations.ApiModelProperty;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -15,8 +16,8 @@ import java.util.List;
 
 @Setter
 @Getter
-@EqualsAndHashCode(exclude = "resume")
-@ToString(exclude = "resume")
+@EqualsAndHashCode(exclude = "resumes")
+@ToString(exclude = "resumes")
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -33,22 +34,22 @@ public class Vacancy {
 
     @ApiModelProperty(value = "Name of the Vacancy", example = "Junior Software Developer/Engineer - Remote (JAVA)")
     @Column(name = "vacancy_name", nullable = false)
+    @NotBlank
     private String vacancyName;
-
 
     @ApiModelProperty(value = "Employment type", example = "FULL_TIME")
     @Enumerated(EnumType.STRING)
-    @Column(name = "employment_type")
+    @Column(name = "employment_type", nullable = true)
     private EmploymentType employmentType;
 
     @ApiModelProperty(value = "Work mode", example = "REMOTE")
     @Enumerated(EnumType.STRING)
-    @Column(name = "work_mode")
+    @Column(name = "work_mode", nullable = true)
     private WorkMode workMode;
 
     @ApiModelProperty(value = "Experience level required", example = "JUNIOR")
     @Enumerated(EnumType.STRING)
-    @Column(name = "experience_level")
+    @Column(name = "experience_level", nullable = true)
     private ExperienceLevel experienceLevel;
 
     @ApiModelProperty(value = "Status of the Vacancy", example = "OPEN")
