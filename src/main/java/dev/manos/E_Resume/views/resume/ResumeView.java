@@ -1,8 +1,6 @@
 package dev.manos.E_Resume.views.resume;
 
 import com.vaadin.flow.component.Composite;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.Uses;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H1;
@@ -37,7 +35,6 @@ import java.util.Optional;
 @Uses(Icon.class)
 public class ResumeView extends Composite<VerticalLayout> {
 
-
     @Autowired
     private ResumeService resumeService;
     @Autowired
@@ -54,17 +51,9 @@ public class ResumeView extends Composite<VerticalLayout> {
 
     public ResumeView() {
         VerticalLayout card = new VerticalLayout();
-        card.addClassName("content-card");
-
-        card.getStyle().set("background-color", "rgba(255, 255, 255, 0.8)")  // 80% opacity white background
-                .set("margin", "20px").set("max-width", "calc(100% - 50px)").set("box-sizing", "border-box");
-
-        card.setWidthFull();
-        card.setHeightFull();
-        card.getStyle().set("margin", "20px").set("max-width", "calc(100% - 50px)").set("box-sizing", "border-box");
 
         // Create header section
-        H1 header = new H1("Resumes");
+        H1 header = new H1();
         header.getStyle().set("margin", "0").set("padding", "var(--lumo-space-m) var(--lumo-space-m) 0");
 
 

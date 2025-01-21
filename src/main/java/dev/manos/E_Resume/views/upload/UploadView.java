@@ -2,14 +2,9 @@ package dev.manos.E_Resume.views.upload;
 
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -29,8 +24,9 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import java.io.IOException;
 import java.io.InputStream;
+
 @PageTitle("Upload Resume")
-@Route(value = "", layout = MainLayout.class)
+@Route(value = "upload", layout = MainLayout.class)
 public class UploadView extends VerticalLayout {
 
     private final RestClient restClient;
@@ -73,6 +69,7 @@ public class UploadView extends VerticalLayout {
 
     private TextArea createTextArea() {
         TextArea area = new TextArea("Resume Content");
+        area.getStyle().set("background-color", "transparent"); // This removes the white background
         area.setWidthFull();
         area.setMinHeight("200px");
         area.getStyle().set("margin-top", "var(--lumo-space-m)").set("border-radius", "var(--lumo-border-radius-m)");
