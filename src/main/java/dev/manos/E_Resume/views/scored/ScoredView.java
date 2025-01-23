@@ -13,14 +13,17 @@ import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.SvgIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.SortDirection;
+import com.vaadin.flow.data.renderer.NumberRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 import dev.manos.E_Resume.ScoredResume.ScoredResumeDTO;
 import dev.manos.E_Resume.ScoredResume.ScoredResumeService;
@@ -59,10 +62,7 @@ public class ScoredView extends Composite<VerticalLayout> {
         buttonLayout.setPadding(true);
         buttonLayout.getStyle().set("margin-top", "var(--lumo-space-m)");
 
-
-                Button scoreButton = new Button();
-
-
+        Button scoreButton = new Button();
         scoreButton.setText("Score");
         scoreButton.setWidth("min-content");
         scoreButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -93,16 +93,20 @@ public class ScoredView extends Composite<VerticalLayout> {
 
         VerticalLayout dialogLayout = createDialogLayout(dialog);
         dialog.add(dialogLayout);
-        dialog.setHeaderTitle("User details");
+        dialog.setHeaderTitle("Scoring configuration");
 
         Button closeButton = new Button(new Icon("lumo", "cross"),
                 (e) -> dialog.close());
         closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         dialog.getHeader().add(closeButton);
 
-        Button button2 = new Button("Show dialog", e -> dialog.open());
+        StreamResource editIconResource2 = new StreamResource("slider.svg", () -> getClass().getResourceAsStream("/icons/slider.svg"));
+        SvgIcon sliderIcon = new SvgIcon(editIconResource2);
+        sliderIcon.setSize("1.2em");  // Slightly increase edit icon size for consistency
+        Button sliderDialog = new Button(sliderIcon , e -> dialog.open());
+        sliderDialog.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ICON);
 
-        card.add(createSection(grid), clearButton, scoreButton, button2);
+        card.add(createSection(grid), clearButton, scoreButton, sliderDialog);
 
         VerticalLayout layout = getContent();
         layout.add(card);
@@ -110,11 +114,9 @@ public class ScoredView extends Composite<VerticalLayout> {
         layout.setPadding(false);
         layout.setSpacing(false);
         layout.setSizeFull();
-
     }
 
     private VerticalLayout createDialogLayout(Dialog dialog) {
-
         Paragraph textLarge = new Paragraph();
         Paragraph textLarge2 = new Paragraph();
         Paragraph textLarge3 = new Paragraph();
@@ -190,37 +192,90 @@ public class ScoredView extends Composite<VerticalLayout> {
     private Grid<ScoredResumeDTO> createGrid() {
         Grid<ScoredResumeDTO> grid = new Grid<>(ScoredResumeDTO.class, false);
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
+        grid.setClassNameGenerator(item -> {
+            grid.getStyle().set("--vaadin-grid-cell-background", "transparent");
+            return "";
+        });
+        grid.getStyle().set("background-color", "rgba(255, 255, 255, 0)");
         grid.setWidth("100%");
+        grid.setHeight("800px");
         grid.getStyle().set("flex-grow", "1");
         return grid;
     }
 
     private void configureGrid() {
-        grid.addColumn(ScoredResumeDTO::getFullName).setHeader("Name").setSortable(true);
-        Grid.Column<ScoredResumeDTO> totalScoreColumn = grid.addColumn(ScoredResumeDTO::getTotalScore).setHeader("Total Score").setSortable(true).setKey("totalScore").setTextAlign(ColumnTextAlign.END);// Add a key for easier reference
-        grid.addColumn(ScoredResumeDTO::getWorkExperienceScore).setHeader("Work experience").setSortable(true).setTextAlign(ColumnTextAlign.END);
-        grid.addColumn(ScoredResumeDTO::getEducationScore).setHeader("Education").setSortable(true).setTextAlign(ColumnTextAlign.END);
-        grid.addColumn(ScoredResumeDTO::getProjectsScore).setHeader("Projects").setSortable(true).setTextAlign(ColumnTextAlign.END);
-        grid.addColumn(ScoredResumeDTO::getVolunteerWorkScore).setHeader("Volunteer Work").setSortable(true).setTextAlign(ColumnTextAlign.END);
-        grid.addColumn(ScoredResumeDTO::getCertificationsAndCoursesScore).setHeader("Certifications").setSortable(true).setTextAlign(ColumnTextAlign.END);
-        grid.addColumn(ScoredResumeDTO::getSkillsScore).setHeader("Skills").setSortable(true).setTextAlign(ColumnTextAlign.END);
-        grid.addColumn(ScoredResumeDTO::getLanguagesScore).setHeader("Languages").setSortable(true).setTextAlign(ColumnTextAlign.END);
-        grid.sort(List.of(new GridSortOrder<>(grid.getColumns().get(1), SortDirection.DESCENDING)));
+        grid.addColumn(ScoredResumeDTO::getFullName)
+                .setHeader("Name")
+                .setSortable(true);
+
+        // Format numeric columns using NumberRenderer
+        Grid.Column<ScoredResumeDTO> totalScoreColumn = grid.addColumn(new NumberRenderer<>(
+                        ScoredResumeDTO::getTotalScore,
+                        "%.0f"))
+                .setHeader("Total Score")
+                .setSortable(true)
+                .setKey("totalScore")
+                .setTextAlign(ColumnTextAlign.END);
+
+        grid.addColumn(new NumberRenderer<>(
+                        ScoredResumeDTO::getWorkExperienceScore,
+                        "%.0f"))
+                .setHeader("Work experience")
+                .setSortable(true)
+                .setTextAlign(ColumnTextAlign.END);
+
+        grid.addColumn(new NumberRenderer<>(
+                        ScoredResumeDTO::getEducationScore,
+                        "%.0f"))
+                .setHeader("Education")
+                .setSortable(true)
+                .setTextAlign(ColumnTextAlign.END);
+
+        grid.addColumn(new NumberRenderer<>(
+                        ScoredResumeDTO::getProjectsScore,
+                        "%.0f"))
+                .setHeader("Projects")
+                .setSortable(true)
+                .setTextAlign(ColumnTextAlign.END);
+
+        grid.addColumn(new NumberRenderer<>(
+                        ScoredResumeDTO::getVolunteerWorkScore,
+                        "%.0f"))
+                .setHeader("Volunteer Work")
+                .setSortable(true)
+                .setTextAlign(ColumnTextAlign.END);
+
+        grid.addColumn(new NumberRenderer<>(
+                        ScoredResumeDTO::getCertificationsAndCoursesScore,
+                        "%.0f"))
+                .setHeader("Certifications")
+                .setSortable(true)
+                .setTextAlign(ColumnTextAlign.END);
+
+        grid.addColumn(new NumberRenderer<>(
+                        ScoredResumeDTO::getSkillsScore,
+                        "%.0f"))
+                .setHeader("Skills")
+                .setSortable(true)
+                .setTextAlign(ColumnTextAlign.END);
+
+        grid.addColumn(new NumberRenderer<>(
+                        ScoredResumeDTO::getLanguagesScore,
+                        "%.0f"))
+                .setHeader("Languages")
+                .setSortable(true)
+                .setTextAlign(ColumnTextAlign.END);
+
         GridSortOrder<ScoredResumeDTO> order = new GridSortOrder<>(totalScoreColumn, SortDirection.DESCENDING);
         grid.sort(Collections.singletonList(order));
 
-        // Configure the initial data provider with the sort order
         setGridData();
-
-        // Force refresh to apply the sort
         grid.getDataProvider().refreshAll();
     }
 
     private void setGridData() {
         grid.setItems(query -> {
-            // Create a Spring Sort object for the total score
             Sort defaultSort = Sort.by(Sort.Direction.DESC, "totalScore");
-
             // If there's a user-specified sort, use that instead
             Sort sort = query.getSortOrders().isEmpty() ? defaultSort : VaadinSpringDataHelpers.toSpringDataSort(query);
 
