@@ -437,9 +437,19 @@ public class MainLayout extends HorizontalLayout implements RouterLayout {
             contentWrapper.setSizeFull();
             contentWrapper.setPadding(false);
             contentWrapper.setSpacing(false);
-            contentWrapper.setAlignItems(FlexComponent.Alignment.CENTER); // Centers children horizontally
+            contentWrapper.setAlignItems(FlexComponent.Alignment.CENTER);
+            // Create tabs and select the correct one
+            TabSheet tabSheet = (TabSheet) createTabs().getChildren().findFirst().orElseThrow();
 
-            contentWrapper.add(createTabs());
+            // Select the correct tab based on the current view
+            if (contentComponent instanceof UploadView) {
+                tabSheet.setSelectedIndex(0);
+            } else if (contentComponent instanceof ResumeView) {
+                tabSheet.setSelectedIndex(1);
+            } else if (contentComponent instanceof ScoredView) {
+                tabSheet.setSelectedIndex(2);
+            }
+            contentWrapper.add(tabSheet);
             contentWrapper.add(contentComponent);
 
             contentContainer.add(contentWrapper);
