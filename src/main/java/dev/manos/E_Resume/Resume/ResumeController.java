@@ -6,6 +6,10 @@ import dev.manos.E_Resume.ScoredResume.ScoredResume;
 import dev.manos.E_Resume.ScoredResume.ScoredResumeService;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,9 +33,9 @@ public class ResumeController {
         this.scoredResumeService = scoredResumeService;
     }
 
-    @PostMapping("/parse")
-    public ResponseEntity<Resume> processResume(@RequestBody String resumeText) {
-        Resume resume = resumeService.parseResume(resumeText);
+    @PostMapping("/parse/{vacancyId}")
+    public ResponseEntity<Resume> processResume(@RequestBody String resumeText,@PathVariable Long vacancyId) {
+        Resume resume = resumeService.parseResume(resumeText, vacancyId);
         if (resume != null) {
             return new ResponseEntity<>(resume, HttpStatus.CREATED);
         } else {
@@ -52,6 +56,17 @@ public class ResumeController {
         return optionalResume.map(o -> new ResponseEntity<>(o, HttpStatus.OK)).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @GetMapping("/getAllResumes/{vacancyId}")
+    public ResponseEntity<Page<ResumeDTO>> getAllResumesByVacancyId(
+            @PathVariable Long vacancyId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sort) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
+        Page<ResumeDTO> resumes = resumeService.listResumesAsDTO(vacancyId, pageable);
+        return new ResponseEntity<>(resumes, HttpStatus.OK);
+    }
 
     @PostMapping("/score/{resumeId}")
     public ResponseEntity<ScoredResume> scoreById(@PathVariable Long resumeId) {
@@ -79,10 +94,21 @@ public class ResumeController {
         return optionalScoredResume.map(o -> new ResponseEntity<>(o, HttpStatus.OK)).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping("/deleteAllScoredResumes")
-    public ResponseEntity deleteAllScoredResumes() {
+    @DeleteMapping("/deleteAllScoredResumes")
+    public ResponseEntity<Void> deleteAllScoredResumes() {
         scoredResumeService.deleteAllScoredResumes();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+    @DeleteMapping("/deleteAllResumes")
+    public ResponseEntity<Void> deleteAllResumes() {
+        resumeService.deleteAllResumes();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    @DeleteMapping("/deleteResumeById/{id}")
+    public ResponseEntity<Void> deleteResumeById(@PathVariable Long id) {
+        resumeService.deleteResume(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 
 }

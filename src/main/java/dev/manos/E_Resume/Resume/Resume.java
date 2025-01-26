@@ -36,6 +36,7 @@ public class Resume {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vacancy_id")
+    @JsonIgnore
     private Vacancy vacancy;
 
     @ApiModelProperty(value = "First name of the person", example = "John")

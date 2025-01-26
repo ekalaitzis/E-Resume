@@ -1,12 +1,9 @@
 package dev.manos.E_Resume.Resume;
 
 
-import dev.manos.E_Resume.Certification.CertificationRepository;
-import dev.manos.E_Resume.Education.EducationRepository;
-import dev.manos.E_Resume.Project.ProjectRepository;
+import com.vaadin.flow.data.provider.DataProvider;
 import dev.manos.E_Resume.Resume.Exception.ResumeNotFoundException;
-import dev.manos.E_Resume.Volunteer.VolunteerRepository;
-import dev.manos.E_Resume.WorkExperience.WorkExperienceRepository;
+import dev.manos.E_Resume.Vacancy.VacancyRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.ai.chat.model.ChatModel;
@@ -15,16 +12,13 @@ import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.converter.BeanOutputConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -36,10 +30,10 @@ public class ResumeService {
 
     @Autowired
     private ResumeRepository resumeRepository;
+    private VacancyRepository vacancyRepository;
 
 
-
-    public Resume parseResume(String resumeText) {
+    public Resume parseResume(String resumeText,Long vacancyId) {
         BeanOutputConverter<Resume> beanOutputConverter = new BeanOutputConverter<>(Resume.class);
         String format = beanOutputConverter.getFormat();
 
@@ -78,6 +72,7 @@ public class ResumeService {
         Long lastIdPlusOne = resumeRepository.findAll().stream().map(Resume::getId).max(Long::compareTo).map(id -> id + 1L).orElse(0L);
 
         resume.setId(lastIdPlusOne);
+        resume.setVacancy(vacancyRepository.getReferenceById(vacancyId));
 
         return resumeRepository.save(resume);
     }
@@ -117,6 +112,10 @@ public class ResumeService {
         resumeRepository.deleteById(id);
     }
 
+    public void deleteAllResumes() {
+        resumeRepository.deleteAll();
+    }
+
 
     public Optional<Resume> get(Long id) {
         return resumeRepository.findById(id);
@@ -126,9 +125,13 @@ public class ResumeService {
         return resumeRepository.save(entity);
     }
 
-    public Page<ResumeDTO> listResumesAsDTO(Pageable pageable) {
-        Page<Resume> resumePage = resumeRepository.findAll(pageable);
+    public Page<ResumeDTO> listResumesAsDTO(Long vacancyId, Pageable pageable) {
+        Page<Resume> resumePage = resumeRepository.findAllByVacancyId(vacancyId, pageable);
         return resumePage.map(ResumeDTO::fromEntity);
+    }
+    public DataProvider<ResumeDTO, Void> listResumesAsDTO2(Long vacancyId, Pageable pageable) {
+        Page<Resume> resumePage = resumeRepository.findAllByVacancyId(vacancyId, pageable);
+        return (DataProvider<ResumeDTO, Void>) resumePage.map(ResumeDTO::fromEntity);
     }
 
     public Page<Resume> list(Pageable pageable) {
@@ -139,13 +142,13 @@ public class ResumeService {
         return resumeRepository.findAll(filter, pageable);
     }
 
-    public Page<ResumeDTO> listResumesByVacancyAsDTO(Long vacancyId, Pageable pageable) {
-        return resumeRepository.findByVacancyId(vacancyId, pageable)
-                .map(ResumeDTO::fromEntity);
-    }
-
-    public Page<ResumeDTO> listResumesByVacancy(Long vacancyId, Pageable pageable) {
-        return resumeRepository.findByVacancyId(vacancyId, pageable)
-                .map(ResumeDTO::fromEntity);
-    }
+//    public Page<ResumeDTO> listResumesByVacancyAsDTO(Long vacancyId, Pageable pageable) {
+//        return resumeRepository.findAllByVacancyId(vacancyId, pageable)
+//                .map(ResumeDTO::fromEntity);
+//    }
+//
+//    public Page<ResumeDTO> listResumesByVacancy(Long vacancyId, Pageable pageable) {
+//        return resumeRepository.findAllByVacancyId(vacancyId, pageable)
+//                .map(ResumeDTO::fromEntity);
+//
 }
