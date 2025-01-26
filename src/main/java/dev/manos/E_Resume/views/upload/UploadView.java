@@ -69,10 +69,11 @@ public class UploadView extends VerticalLayout {
 
     private TextArea createTextArea() {
         TextArea area = new TextArea("Resume Content");
-        area.getStyle().set("background-color", "transparent"); // This removes the white background
+        area.getStyle().set("background-color", "transparent");
         area.setWidthFull();
-        area.setMinHeight("200px");
-        area.getStyle().set("margin-top", "var(--lumo-space-m)").set("border-radius", "var(--lumo-border-radius-m)");
+        area.setHeight("900px");
+        area.setMinHeight("800px");
+        area.setMaxHeight("850px"); // Prevent auto-resizing
         return area;
     }
 
@@ -92,7 +93,6 @@ public class UploadView extends VerticalLayout {
         VerticalLayout section = new VerticalLayout(component);
         section.setPadding(true);
         section.setSpacing(false);
-        section.getStyle().set("border-bottom", "5px solid var(--lumo-contrast-10pct)");
         return section;
     }
 
