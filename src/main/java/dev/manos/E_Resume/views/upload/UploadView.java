@@ -2,6 +2,8 @@ package dev.manos.E_Resume.views.upload;
 
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentUtil;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.notification.Notification;
@@ -138,8 +140,14 @@ public class UploadView extends VerticalLayout {
     private void parseResume() {
         String resumeText = textArea.getValue();
 
+        Long vacancyId = (Long) ComponentUtil.getData(UI.getCurrent(), "selectedVacancyId");
         try {
-            String response = restClient.post().uri("/resume/parse").contentType(MediaType.APPLICATION_JSON).body(resumeText).retrieve().body(String.class);
+            String response = restClient.post()
+                    .uri("/resume/parse/{vacancyId}", vacancyId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(resumeText)
+                    .retrieve()
+                    .body(String.class);
 
             Notification.show("Resume parsed successfully");
         } catch (WebClientResponseException e) {
