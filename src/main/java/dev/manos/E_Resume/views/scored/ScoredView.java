@@ -10,7 +10,6 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSortOrder;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.SvgIcon;
@@ -34,7 +33,6 @@ import org.springframework.data.domain.Sort;
 import org.vaadin.addons.componentfactory.PaperSlider;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.function.Consumer;
 
 @PageTitle("Scored")
@@ -56,12 +54,6 @@ public class ScoredView extends Composite<VerticalLayout> {
         // Create clear button
         Button clearButton = createClearButton();
 
-        // Create button layout
-        HorizontalLayout buttonLayout = new HorizontalLayout(clearButton);
-        buttonLayout.setSpacing(true);
-        buttonLayout.setPadding(true);
-        buttonLayout.getStyle().set("margin-top", "var(--lumo-space-m)");
-
         Button scoreButton = new Button();
         scoreButton.setText("Score");
         scoreButton.setWidth("min-content");
@@ -72,8 +64,9 @@ public class ScoredView extends Composite<VerticalLayout> {
             dialog.setHeader("Confirm Score");
             dialog.setText("Are you sure you want to rate all resumes?");
             dialog.setCancelable(true);
-            dialog.setConfirmText("Score");
+            dialog.setConfirmText("Yes");
             dialog.setConfirmButtonTheme("error primary");
+            dialog.setConfirmButtonTheme("primary");
             dialog.addConfirmListener(event -> {
                 try {
                     scoredResumeService.giveScoreToAll();
@@ -106,7 +99,18 @@ public class ScoredView extends Composite<VerticalLayout> {
         Button sliderDialog = new Button(sliderIcon , e -> dialog.open());
         sliderDialog.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ICON);
 
-        card.add(createSection(grid), clearButton, scoreButton, sliderDialog);
+        HorizontalLayout buttonLayout = new HorizontalLayout();
+        buttonLayout.setWidthFull();
+        buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
+
+// Create left side button group
+        HorizontalLayout leftButtons = new HorizontalLayout(scoreButton, sliderDialog);
+        leftButtons.setSpacing(true);
+        buttonLayout.add(leftButtons, clearButton);
+        buttonLayout.setPadding(true);
+        buttonLayout.getStyle().set("margin-top", "var(--lumo-space-m)");
+
+        card.add(createSection(grid), buttonLayout);
 
         VerticalLayout layout = getContent();
         layout.add(card);
@@ -191,12 +195,6 @@ public class ScoredView extends Composite<VerticalLayout> {
 
     private Grid<ScoredResumeDTO> createGrid() {
         Grid<ScoredResumeDTO> grid = new Grid<>(ScoredResumeDTO.class, false);
-        grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
-        grid.setClassNameGenerator(item -> {
-            grid.getStyle().set("--vaadin-grid-cell-background", "transparent");
-            return "";
-        });
-        grid.getStyle().set("background-color", "rgba(255, 255, 255, 0)");
         grid.setWidth("100%");
         grid.setHeight("800px");
         grid.getStyle().set("flex-grow", "1");
@@ -284,8 +282,10 @@ public class ScoredView extends Composite<VerticalLayout> {
     }
 
     private Button createClearButton() {
-        Button clearButton = new Button("Clear All");
-        clearButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
+        StreamResource editIconResource2 = new StreamResource("trash.svg", () -> getClass().getResourceAsStream("/icons/trash.svg"));
+        SvgIcon trashIcon = new SvgIcon(editIconResource2);
+        Button clearButton = new Button(trashIcon);
+        clearButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ERROR);
         clearButton.addClickListener(e -> showClearConfirmDialog());
         return clearButton;
     }
@@ -294,7 +294,6 @@ public class ScoredView extends Composite<VerticalLayout> {
         VerticalLayout section = new VerticalLayout(component);
         section.setPadding(true);
         section.setSpacing(false);
-        section.getStyle().set("border-bottom", "5px solid var(--lumo-contrast-10pct)");
         return section;
     }
 
