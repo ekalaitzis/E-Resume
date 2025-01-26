@@ -1,12 +1,11 @@
 package dev.manos.E_Resume.Vacancy;
 
-import dev.manos.E_Resume.Resume.Resume;
-import dev.manos.E_Resume.Resume.ResumeDTO;
 import dev.manos.E_Resume.Vacancy.Exceptions.VacancyNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -78,14 +77,9 @@ public class VacancyService {
         vacancyRepository.deleteAll();
     }
 
-//    public Vacancy createVacancy(Vacancy vacancy) {
-//        vacancy.setPostDate(LocalDate.now());
-//        return vacancyRepository.save(vacancy);
-//    }
-
     public Page<VacancyDTO> listVacancyAsDTO(Pageable pageable) {
-        Page<Vacancy> VacancyPage = vacancyRepository.findAll(pageable);
-        return VacancyPage.map(VacancyDTO::fromEntity);
+        Page<Vacancy> vacancyPage = vacancyRepository.findAll(pageable);
+        return vacancyPage.map(VacancyDTO::fromEntity);
     }
 
 
@@ -114,5 +108,8 @@ public class VacancyService {
 }
 
 
-
+    public Optional<VacancyDTO> listVacanciesAsDTO(PageRequest pageable) {
+        Page<Vacancy> vacancyPage = vacancyRepository.findAll(pageable);
+        return vacancyPage.stream().findFirst().map(VacancyDTO::fromEntity);
+    }
 }
