@@ -3,6 +3,7 @@ package dev.manos.E_Resume.views.resume;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.dependency.Uses;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -51,6 +52,7 @@ public class ResumeView extends Composite<VerticalLayout> {
 
     public ResumeView() {
         VerticalLayout card = new VerticalLayout();
+        card.setPadding(false);
 
         // Create header section
         H1 header = new H1();
@@ -60,7 +62,7 @@ public class ResumeView extends Composite<VerticalLayout> {
         HorizontalLayout horizontalLayoutResume = new HorizontalLayout();
         horizontalLayoutResume.setWidth("100%");
         horizontalLayoutResume.setSpacing(true);
-        horizontalLayoutResume.setPadding(true);
+        horizontalLayoutResume.setPadding(false);
         Grid resumeGrid = new Grid(ResumeDTO.class, false);
 
         setGridSampleData(resumeGrid);
@@ -69,15 +71,16 @@ public class ResumeView extends Composite<VerticalLayout> {
         HorizontalLayout horizontalLayoutWith2Grids = new HorizontalLayout();
         horizontalLayoutWith2Grids.setWidth("100%");
         horizontalLayoutWith2Grids.setSpacing(true);
-        horizontalLayoutWith2Grids.setPadding(true);
+        horizontalLayoutWith2Grids.setPadding(false);
 
         HorizontalLayout horizontalLayoutWith3Grids = new HorizontalLayout();
         horizontalLayoutWith3Grids.setWidth("100%");
         horizontalLayoutWith3Grids.setSpacing(true);
-        horizontalLayoutWith3Grids.setPadding(true);
+        horizontalLayoutWith3Grids.setPadding(false);
 
         Grid<EducationDTO> educationDTOGrid = new Grid<>(EducationDTO.class, false);
         Grid<WorkExperienceDTO> workExperienceDTOGrid = new Grid<>(WorkExperienceDTO.class, false);
+        workExperienceDTOGrid.addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_WRAP_CELL_CONTENT);
         Grid<VolunteerWorkDTO> volunteerWorkDTOGrid = new Grid<>(VolunteerWorkDTO.class, false);
         Grid<ProjectDTO> projectDTOGrid = new Grid<>(ProjectDTO.class, false);
         Grid<CertificationDTO> certificationDTOGrid = new Grid<>(CertificationDTO.class, false);
@@ -94,6 +97,13 @@ public class ResumeView extends Composite<VerticalLayout> {
         configureProjectGrid(projectDTOGrid);
         configureCertificationGrid(certificationDTOGrid);
 
+        resumeGrid.setHeight("500px");
+        educationDTOGrid.setHeight("300px");
+        workExperienceDTOGrid.setHeight("300px");
+        volunteerWorkDTOGrid.setHeight("300px");
+        projectDTOGrid.setHeight("300px");
+        certificationDTOGrid.setHeight("300px");
+
         horizontalLayoutResume.add(resumeGrid);
         horizontalLayoutWith2Grids.add(educationDTOGrid, workExperienceDTOGrid);
         horizontalLayoutWith3Grids.add(projectDTOGrid, certificationDTOGrid, volunteerWorkDTOGrid);
@@ -104,9 +114,6 @@ public class ResumeView extends Composite<VerticalLayout> {
         horizontalLayoutWith3Grids.setFlexGrow(1, volunteerWorkDTOGrid);
         horizontalLayoutWith3Grids.setFlexGrow(1, projectDTOGrid);
         horizontalLayoutWith3Grids.setFlexGrow(1, certificationDTOGrid);
-
-        // Add components to the main layout
-        // Button deleteAllResumesButton = new Button();
 
         resumeGrid.addSelectionListener(selection -> {
             Optional<ResumeDTO> optionalResume = selection.getFirstSelectedItem();
@@ -121,10 +128,6 @@ public class ResumeView extends Composite<VerticalLayout> {
                 educationDTOGrid.setItems(Collections.emptyList());
             }
         });
-
-        // deleteAllResumesButton.setText("Delete all");
-        // deleteAllResumesButton.setWidth("min-content");
-        // deleteAllResumesButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
         card.add(header, horizontalLayoutResume, horizontalLayoutWith2Grids, horizontalLayoutWith3Grids);
 
