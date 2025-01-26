@@ -1,0 +1,203 @@
+/* Import statements */
+@import url('./main-layout.css');
+@import url('./views/upload-view.css');
+@import url('./views/resume-view.css');
+@import url('./views/scored-view.css');
+
+
+
+html {
+    background-color: var(--lumo-contrast-5pct);
+}
+
+#outlet {
+    overflow: auto;
+}
+
+.components-view {
+    padding: var(--lumo-space-l);
+}
+
+.components-view .card {
+    padding: var(--lumo-space-l);
+    border-radius: var(--lumo-border-radius-l);
+    background: radial-gradient(circle at 25% 0%, hsl(0 0% 100% / 0.9), transparent 50%), hsl(0 0% 98% / 0.7);
+    background-origin: border-box;
+    box-shadow: inset 0 0 0 1px hsl(0 0% 100% / 0.06), 0 0 0 1px hsl(0 0% 0% / 0.06);
+}
+
+.components-view vaadin-date-time-picker vaadin-date-picker {
+    --vaadin-field-default-width: 10em;
+}
+
+.components-view vaadin-date-time-picker vaadin-time-picker {
+    --vaadin-field-default-width: 6em;
+}
+
+.components-view vaadin-select.state-select {
+    padding: 0;
+}
+
+/* dark theme */
+[theme~=dark] .components-view .card {
+    background: radial-gradient(circle at 25% 0%, hsl(0 0% 100% / 0.1), transparent 50%), hsl(var(--primary-h) calc(var(--primary-s) / 5) 20% / 0.5);
+    background-origin: border-box;
+}
+
+@media screen and (max-width: 1200px) {
+    .components-view .view-content {
+        flex-wrap: wrap;
+    }
+}
+
+/*!* Layout Components *!*/
+/*vaadin-app-layout::part(drawer) {*/
+/*    width: 250px;*/
+/*}*/
+
+/*vaadin-app-layout::part(content) {*/
+/*    padding: var(--lumo-space-m);*/
+/*}*/
+
+/* Navigation Elements */
+/*vaadin-tab {*/
+/*    &[selected] {*/
+/*        background-color: var(--lumo-primary-color-10pct);*/
+/*    }*/
+
+/*    &:hover {*/
+/*        background-color: var(--lumo-contrast-5pct);*/
+/*    }*/
+/*}*/
+
+/* Content Styling */
+.content-card {
+    background-color: var(--lumo-base-color);
+    border-radius: var(--lumo-border-radius-l);
+    box-shadow: var(--lumo-box-shadow-s);
+    padding: var(--lumo-space-m);
+    margin: var(--lumo-space-m);
+
+    & h1 {
+        font-size: var(--lumo-font-size-xl);
+        font-weight: 600;
+        color: var(--lumo-header-text-color);
+    }
+}
+
+
+/*.components-view .card {*/
+/*    padding: var(--lumo-space-l);*/
+/*    border-radius: var(--lumo-border-radius-l);*/
+/*    background: radial-gradient(circle at 25% 0%, hsl(0 0% 100% / 0.9), transparent 50%), hsl(0 0% 98% / 0.7);*/
+/*    background-origin: border-box;*/
+/*    box-shadow: inset 0 0 0 1px hsl(0 0% 100% / 0.06), 0 0 0 1px hsl(0 0% 0% / 0.06);*/
+/*}*/
+
+ /*Form Elements */
+vaadin-upload {
+    background-color: var(--lumo-contrast-5pct);
+}
+
+vaadin-text-area {
+    background-color: var(--lumo-base-color);
+}
+
+vaadin-button {
+    border-radius: var(--lumo-border-radius-m);
+}
+
+/*!* Notifications *!*/
+/*.notifications {*/
+/*    max-height: 350px;*/
+
+/*    & vaadin-tabs::part(tabs) {*/
+/*        margin-left: var(--lumo-space-xs);*/
+/*    }*/
+
+/*    & vaadin-message {*/
+/*        padding: var(--lumo-space-s) 0 var(--lumo-space-m) 0;*/
+/*        margin: 0 var(--lumo-space-m);*/
+/*        font-size: var(--lumo-font-size-s);*/
+/*        border-bottom: 1px solid var(--lumo-contrast-10pct);*/
+/*    }*/
+/*}*/
+
+/*.no-notifications-msg {*/
+/*    padding: var(--lumo-space-m);*/
+/*    color: var(--lumo-secondary-text-color);*/
+/*}*/
+
+/* Sidebar */
+.sidebar {
+    width: 80px;
+    padding: 10px;
+    align-items: center;
+    background-color: transparent !important;
+    border-right: 1px solid var(--lumo-contrast-10pct);
+    /*box-shadow: none;*/
+}
+
+/* primary button color change
+*/
+/* Modern primary button color change */
+/* Minimalist modern primary button */
+/* Primary Button (from previous answer) */
+/* Primary Button */
+vaadin-button[theme~="primary"] {
+    background: linear-gradient(to bottom, #2196f3, #1976d2) !important;
+    color: white !important;
+    border: none !important;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.3s ease !important;
+}
+
+vaadin-button[theme~="primary"]:hover {
+    background: linear-gradient(to bottom, #42a5f5, #1e88e5) !important;
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+vaadin-button[theme~="primary"]:active {
+    background: linear-gradient(to bottom, #1976d2, #1565c0) !important;
+}
+
+/* Secondary Button */
+vaadin-button[theme~="secondary"] {
+    background: transparent !important;
+    color: #2196f3 !important;
+    border: 2px solid #2196f3 !important;
+    box-shadow: none !important;
+    transition: all 0.3s ease !important;
+}
+
+vaadin-button[theme~="secondary"]:hover {
+    background: rgba(33, 150, 243, 0.1) !important;
+}
+
+vaadin-button[theme~="secondary"]:active {
+    background: rgba(33, 150, 243, 0.2) !important;
+}
+
+/*!* Tertiary Button *!*/
+/*vaadin-button[theme~="tertiary"] {*/
+/*    background: transparent !important;*/
+/*    color: #2196f3 !important;*/
+/*    border: none !important;*/
+/*    box-shadow: none !important;*/
+/*    transition: all 0.3s ease !important;*/
+/*}*/
+
+vaadin-button[theme~="tertiary"]:hover {
+    background: rgba(33, 150, 243, 0.1) !important;
+}
+
+vaadin-button[theme~="tertiary"]:active {
+    background: rgba(33, 150, 243, 0.2) !important;
+}
+
+paper-slider {
+    --paper-slider-active-color: #2196f3;
+    --paper-slider-knob-color: #2196f3;
+    --paper-slider-pin-color: #2196f3;
+    --paper-slider-secondary-color: #90caf9;
+}

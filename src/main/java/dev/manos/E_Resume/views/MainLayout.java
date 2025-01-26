@@ -7,6 +7,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.HeaderRow;
@@ -281,7 +282,9 @@ public class MainLayout extends HorizontalLayout implements RouterLayout {
             editButton.addClickListener(e -> openEditDialog(vacancy));
             return editButton;
         }).setWidth("3em").setFlexGrow(0);  // Adjusted width as requested
-
+        editColumn.setAutoWidth(true)
+                .setTextAlign(ColumnTextAlign.CENTER)
+                .setFlexGrow(0);
         // Create header layout for the edit column with just the add button
         HorizontalLayout editHeaderLayout = new HorizontalLayout(addVacancyButton);
         editHeaderLayout.setJustifyContentMode(JustifyContentMode.CENTER);
@@ -341,9 +344,8 @@ public class MainLayout extends HorizontalLayout implements RouterLayout {
         Button deleteButton = new Button("Delete", e -> {
             confirmDelete(vacancy);
             dialog.close();
-
         });
-        deleteButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
+        deleteButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ERROR);
         deleteButton.getStyle().set("margin-right", "auto");
         dialog.getFooter().add(deleteButton);
 

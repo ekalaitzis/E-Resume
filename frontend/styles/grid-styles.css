@@ -34,3 +34,9 @@
     font-weight: 500;
     color: var(--lumo-secondary-text-color);
 }
+
+
+.custom-vacancy-grid ::part(row[selected]) {
+    box-shadow: 0 0 0 2px var(--lumo-primary-color);
+    border-radius: 8px; /* Adjust for the desired roundness */
+}
