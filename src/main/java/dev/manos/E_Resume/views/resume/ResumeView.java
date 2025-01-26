@@ -1,6 +1,8 @@
 package dev.manos.E_Resume.views.resume;
 
+import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.Composite;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.Uses;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -20,11 +22,13 @@ import dev.manos.E_Resume.Project.ProjectDTO;
 import dev.manos.E_Resume.Project.ProjectService;
 import dev.manos.E_Resume.Resume.ResumeDTO;
 import dev.manos.E_Resume.Resume.ResumeService;
+import dev.manos.E_Resume.Vacancy.VacancyService;
 import dev.manos.E_Resume.Volunteer.VolunteerService;
 import dev.manos.E_Resume.Volunteer.VolunteerWorkDTO;
 import dev.manos.E_Resume.WorkExperience.WorkExperienceDTO;
 import dev.manos.E_Resume.WorkExperience.WorkExperienceService;
 import dev.manos.E_Resume.views.MainLayout;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 
@@ -49,8 +53,15 @@ public class ResumeView extends Composite<VerticalLayout> {
     @Autowired
     private VolunteerService volunteerService;
 
+    @Autowired
+    private VacancyService vacancyService;
 
-    public ResumeView() {
+    @Getter
+    private Grid<ResumeDTO> resumeGrid;
+
+
+    public ResumeView(VacancyService vacancyService) {
+        this.vacancyService= vacancyService;
         VerticalLayout card = new VerticalLayout();
         card.setPadding(false);
 
@@ -63,8 +74,7 @@ public class ResumeView extends Composite<VerticalLayout> {
         horizontalLayoutResume.setWidth("100%");
         horizontalLayoutResume.setSpacing(true);
         horizontalLayoutResume.setPadding(false);
-        Grid resumeGrid = new Grid(ResumeDTO.class, false);
-
+        resumeGrid = new Grid<>(ResumeDTO.class, false);
         setGridSampleData(resumeGrid);
         configureResumeGrid(resumeGrid);
 
@@ -139,9 +149,17 @@ public class ResumeView extends Composite<VerticalLayout> {
         layout.setSizeFull();
     }
 
-
     private void setGridSampleData(Grid<ResumeDTO> grid) {
-        grid.setItems(query -> resumeService.listResumesAsDTO(PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query))).stream());
+        Long vacancyId = (Long) ComponentUtil.getData(UI.getCurrent(), "selectedVacancyId");
+
+        grid.setItems(query -> resumeService.listResumesAsDTO(
+                vacancyId,
+                PageRequest.of(
+                        query.getPage(),
+                        query.getPageSize(),
+                        VaadinSpringDataHelpers.toSpringDataSort(query)
+                )
+        ).stream());
     }
 
     private void configureResumeGrid(Grid<ResumeDTO> grid) {
