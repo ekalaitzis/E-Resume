@@ -1,48 +1,69 @@
 
-
 # Resume Sorting System
 
 A tool for parsing, scoring, and ranking job applicants based on configurable recruiter-defined criteria. Built with modern Java technologies and AI-powered resume mapping.
 
-## **Technology Stack**
+## **Features**
 
-**Backend**
+### **Intelligent Resume Processing**
 
-- Java 21
-- Spring Boot 3.3.4
-- Spring AI (OpenAI integration)
-- Spring Data JPA with Hibernate
-- Maven build system
-- GraalVM native support
-
-**Frontend**
-
-- Vaadin 24 with custom themes
-- Responsive design components
-
-**Database**
-
-- PostgreSQL with comprehensive schema
-- JPA entity relationships
-- Database migrations support
-
-**Document Processing**
-
-- Apache Tika for content extraction
-- Multi-format document support
+- Multi-format document support (PDF, DOC, DOCX)
+- AI-powered content extraction and mapping
+- Automated scoring based on time-equivalent methodology
 
 
-## **Prerequisites**
+### **Configurable Scoring System**
 
-- Java 21 or higher
-- Docker and Docker Compose
-- PostgreSQL (or use provided Docker setup)
-- OpenAI API key
+- Convert qualifications to common time units
+- Recruiter-defined multipliers for job-specific weighting
+- Real-time score recalculation
 
+
+### **Modern Technology Stack**
+
+- **Backend**: Java 21, Spring Boot 3.3.4, Spring AI (OpenAI integration)
+- **Frontend**: Vaadin 24 with responsive design
+- **Database**: PostgreSQL with JPA/Hibernate
+- **Processing**: Apache Tika for document extraction
+
+
+## **How Resume Scoring Works 🧑‍💻**
+
+The system converts every section of a resume into a common unit: **time**. By translating each qualification into "days of effort," it creates an objective baseline to score and rank candidates fairly.
+
+### **Scoring Formula**
+
+**Final Category Score = "Time Equivalent (in Days)" × "Recruiter Multiplier"**
+
+### **Time Equivalents**
+
+| Resume Item | Time Equivalent (in Days) | Duration |
+| :-- | :-- | :-- |
+| Work Experience | Actual number of days worked | Actual time |
+| Education: Doctorate | 1460 | 4 years |
+| Education: Master's | 1095 | 3 years |
+| Education: Bachelor's | 730 | 2 years |
+| Project | 183 | 6 months |
+| Volunteer Work | 183 | 6 months |
+| Certification | 120 | 4 months |
+| Language | 10 | 10 days |
+| Skill | 1 | 1 day |
+
+
+This system creates a balanced foundation where substantial work experience can significantly impact scores, while other qualifications provide consistent, measurable value regardless of their actual duration. However, every job has unique requirements, and the **recruiter multiplier system** allows you to adjust scoring priorities to match your specific needs.
+
+Set multipliers from **0 to 10** for each category through the scoring configuration interface. Moving sliders instantly recalculates scores for all candidates, allowing you to see how your priorities affect rankings.
 
 ## **Quick Start**
 
-### **1. Clone the Repository**
+### **Prerequisites**
+
+- Java 21 or higher
+- Docker and Docker Compose
+- OpenAI API key
+
+
+### **1. Clone and Setup**
 
 ```bash
 git clone <your-repository-url>
@@ -50,39 +71,40 @@ cd resume-sorting-system
 ```
 
 
-### **2. Environment Setup**
+### **2. Configuration**
 
-Create a `secret.properties` file in your project root:
+Create an `application.properties` file in `src/main/resources/`:
 
 ```properties
 # Database Configuration
-DATABASE_URL=jdbc:postgresql://localhost:5433/resume
-DB_USER=your_db_username
-DB_PASSWORD=your_db_password
+spring.datasource.url=jdbc:postgresql://localhost:5432/resume
+spring.datasource.username=YOUR_DB_USERNAME_HERE
+spring.datasource.password=YOUR_DB_PASSWORD_HERE
 
 # OpenAI Configuration
-OPENAI_API_KEY=your_openai_api_key
+spring.ai.openai.api-key=YOUR_OPENAI_API_KEY_HERE
 
-# Optional
-BASE_URL=http://localhost:8080
-PORT=8080
+# Server Configuration
+server.port=8080
 ```
 
+**Note**: For production deployments, use a `secret.properties` file (added to `.gitignore`) to hide sensitive credentials. Load it using `@PropertySource("classpath:secret.properties")` in your configuration class.
 
-### **3. Start PostgreSQL Database**
+### **3. Database Setup**
 
-Create a `docker-compose.yml` file:
+Create `docker-compose.yml`:
 
 ```yaml
+version: '3.8'
 services:
   postgres:
     image: 'postgres:latest'
     environment:
       - 'POSTGRES_DB=resume'
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_USER=${DB_USER}
+      - 'POSTGRES_PASSWORD=YOUR_DB_PASSWORD_HERE'
+      - 'POSTGRES_USER=YOUR_DB_USERNAME_HERE'
     ports:
-      - '5433:5432'
+      - '5432:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -97,50 +119,19 @@ docker-compose up -d
 ```
 
 
-### **4. Initialize Database Schema**
-
-The application includes comprehensive database initialization. The schema will be created automatically on first run, including:
-
-- Resume and candidate management tables
-- Job vacancy tracking
-- Scoring system tables
-- Document storage
-- Relationship mappings for all resume components
-
-
-### **5. Build and Run**
+### **4. Run the Application**
 
 ```bash
-# Build the application
+# Build and run
 mvn clean install
-
-# Run the application
 mvn spring-boot:run
 ```
 
-The application will be available at `http://localhost:8080`
+Access the application at `http://localhost:8080`
 
 ## **Docker Deployment**
 
-### **Build and Run with Docker**
-
-```bash
-# Build the Docker image
-docker build -t resume-sorting-system .
-
-# Run the container
-docker run -p 8080:8080 \
-  -e DATABASE_URL=jdbc:postgresql://host.docker.internal:5433/resume \
-  -e DB_USER=your_db_username \
-  -e DB_PASSWORD=your_db_password \
-  -e OPENAI_API_KEY=your_openai_api_key \
-  resume-sorting-system
-```
-
-
-### **Complete Docker Compose Setup**
-
-For a full production environment, update your `docker-compose.yml`:
+### **Complete Production Setup**
 
 ```yaml
 version: '3.8'
@@ -152,7 +143,7 @@ services:
       - 'POSTGRES_PASSWORD=${DB_PASSWORD}'
       - 'POSTGRES_USER=${DB_USER}'
     ports:
-      - '5433:5432'
+      - '5432:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -163,10 +154,10 @@ services:
     ports:
       - '8080:8080'
     environment:
-      - DATABASE_URL=jdbc:postgresql://postgres:5432/resume
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/resume
+      - SPRING_DATASOURCE_USERNAME=${DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      - SPRING_AI_OPENAI_API_KEY=${OPENAI_API_KEY}
     depends_on:
       - postgres
     networks:
@@ -180,48 +171,47 @@ networks:
     driver: bridge
 ```
 
-**Start the complete stack:**
+Create `.env` file:
+
+```env
+DB_USER=YOUR_DB_USERNAME_HERE
+DB_PASSWORD=YOUR_DB_PASSWORD_HERE
+OPENAI_API_KEY=YOUR_OPENAI_API_KEY_HERE
+```
+
+Deploy:
 
 ```bash
 docker-compose up --build
 ```
 
 
-### **Environment Variables for Docker**
+## **Database Schema**
 
-Create a `.env` file for Docker Compose:
+The application automatically creates comprehensive database schema including:
 
-```env
-# Database Configuration
-DB_USER=resume_user
-DB_PASSWORD=secure_password
-
-# OpenAI Configuration  
-OPENAI_API_KEY=your_openai_api_key
-
-# Optional Configuration
-BASE_URL=http://localhost:8080
-PORT=8080
-```
+- Resume and candidate management tables
+- Job vacancy tracking
+- Scoring system configuration
+- Document storage and metadata
+- Relationship mappings for all resume components
 
 
 ## **AI Integration**
 
-The system integrates with OpenAI's GPT-4o-mini model for intelligent resume parsing. Ensure your API key has sufficient credits and appropriate rate limits.
+Integrates with OpenAI's GPT-4o-mini model for intelligent resume parsing and content extraction. Ensure your API key has sufficient credits and appropriate rate limits for your expected usage volume.
 
 ## **Future Enhancements**
 
-- Security implementation (authentication/authorization)
-- Enhanced front-end features
-- Bulk resume processing
-- Advanced analytics and reporting
+- Authentication and authorization system
+- Bulk resume processing capabilities
+- Advanced analytics and reporting dashboard
 - Machine learning model improvements
+- REST API for programmatic access
 
 ---
 
-*This project is currently in active development. Feedback and contributions are welcome as we work towards a production-ready release.*
+*This project is in active development. Feedback and contributions are welcome as we work towards a production-ready release.*
 
 <div style="text-align: center">⁂</div>
-
-[^1]: programming.java_development
 
