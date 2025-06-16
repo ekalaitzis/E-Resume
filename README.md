@@ -27,7 +27,7 @@ A tool for parsing, scoring, and ranking job applicants based on configurable re
 - **Processing**: Apache Tika for document extraction
 
 
-## **How Resume Scoring Works 🧑‍💻**
+## **How Resume Scoring Works **
 
 The system converts every section of a resume into a common unit: **time**. By translating each qualification into "days of effort," it creates an objective baseline to score and rank candidates fairly.
 
