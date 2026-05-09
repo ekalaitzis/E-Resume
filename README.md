@@ -5,8 +5,6 @@ A tool for parsing, scoring, and ranking job applicants based on configurable re
 
 <div align="center">
   <img src="src/main/resources/icons/Showcase.gif" alt="Resume Sorting System Demo" width="600" height="338">
-  <p><em>Interactive demo showing resume upload, scoring configuration, and candidate ranking</em></p>
-</div>
 
 ## **Features**
 
