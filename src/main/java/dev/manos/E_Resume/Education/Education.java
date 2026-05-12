@@ -35,6 +35,7 @@ public class Education {
     private String institutionName;
 
     @ApiModelProperty(value = "Type of degree earned", example = "Bachelor's or Master's")
+    @Enumerated(EnumType.STRING) 
     @Column(name = "degree_type", nullable = true)
     private DegreeType degreeType;
 
