@@ -138,6 +138,16 @@ public class UploadView extends VerticalLayout {
     }
 
     private void parseResume() {
+        // --- DEMO VERSION CODE ---
+        // Shows a toast-style notification for 5000ms (5 seconds) at the bottom center
+        Notification.show(
+                " Adding new vacancies is disabled in the demo version of the website. Parsing is not allowed in the demo version.",
+                5000,
+                Notification.Position.BOTTOM_CENTER
+        );
+
+        // --- ORIGINAL PRODUCTION CODE (Commented out for easy swapping) ---
+        /*
         String resumeText = textArea.getValue();
 
         Long vacancyId = (Long) ComponentUtil.getData(UI.getCurrent(), "selectedVacancyId");
@@ -155,5 +165,6 @@ public class UploadView extends VerticalLayout {
         } catch (Exception e) {
             Notification.show("Unexpected error: " + e.getMessage());
         }
+        */
     }
 }

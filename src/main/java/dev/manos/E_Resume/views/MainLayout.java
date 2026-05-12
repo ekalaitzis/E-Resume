@@ -159,6 +159,22 @@ public class MainLayout extends HorizontalLayout implements RouterLayout {
     }
 
     private Button createAddButton(Dialog dialog, VerticalLayout dialogLayout) {
+    // --- DEMO VERSION CODE ---
+//        Button addButton = new Button("Add", e -> {
+//            Notification.show(
+//                    "Adding new vacancies is disabled in the demo version of the website.",
+//                    5000,
+//                    Notification.Position.TOP_CENTER
+//            );
+//            dialog.close();
+//        });
+//
+//        addButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+//        return addButton;
+
+        // --- ORIGINAL PRODUCTION CODE (Commented out for easy swapping) ---
+
+
         Button addButton = new Button("Add", e -> {
             try {
                 // Extract values from form fields
@@ -363,6 +379,23 @@ public class MainLayout extends HorizontalLayout implements RouterLayout {
         deleteDialog.setHeaderTitle(String.format("Delete vacancy \"%s\"?", vacancy.get().getVacancyName()));
         deleteDialog.add("Are you sure you want to delete this vacancy permanently?");
 
+        // --- DEMO VERSION CODE ---
+//        Button permdDeleteButton = new Button("Delete", (e) -> {
+//            Notification.show(
+//                    "Deleting data is disabled in the demo version of the website.",
+//                    5000,
+//                    Notification.Position.TOP_CENTER
+//            );
+//            deleteDialog.close();
+//        });
+//
+//        permdDeleteButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
+//        permdDeleteButton.getStyle().set("margin-right", "auto");
+//        deleteDialog.getFooter().add(permdDeleteButton);
+
+
+        // --- ORIGINAL PRODUCTION CODE (Commented out for easy swapping) ---
+
         Button permdDeleteButton = new Button("Delete", (e) -> {
             deleteVacancy(vacancy.get().getId());
             refreshGrid();
@@ -379,6 +412,22 @@ public class MainLayout extends HorizontalLayout implements RouterLayout {
     }
 
     private Button createSaveButton(Dialog dialog, VerticalLayout dialogLayout, Long vacancyId) {
+        // --- DEMO VERSION CODE ---
+//        Button saveButton = new Button("Save", e -> {
+//            Notification.show(
+//                    "Modifying data is disabled in the demo version of the website.",
+//                    5000,
+//                    Notification.Position.TOP_CENTER
+//            );
+//            dialog.close();
+//        });
+//
+//        saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+//        return saveButton;
+
+        // --- ORIGINAL PRODUCTION CODE (Commented out for easy swapping) ---
+
+
         Button saveButton = new Button("Save", e -> {
             try {
                 // Extract form values as before
