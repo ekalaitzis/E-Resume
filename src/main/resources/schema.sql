@@ -200,7 +200,7 @@ CREATE TABLE education
 (
     id               SERIAL PRIMARY KEY,
     institution_name VARCHAR(255) ,
-    degree_type      VARCHAR(25)  ,
+    degree_type      degree_type_enum,
     major_subject    VARCHAR(255) ,
     enrollment_date  DATE         ,
     graduation_date  DATE         ,
@@ -373,8 +373,7 @@ COMMENT ON COLUMN scored_resume.total_score IS 'The total score of each resume';
 CREATE TABLE document
 (
     id                  SERIAL PRIMARY KEY,
-    filename            VARCHAR(50),
-    content             TEXT,
+    filename            VARCHAR(255),    content             TEXT,
     upload_date         TIMESTAMP
 );
 
