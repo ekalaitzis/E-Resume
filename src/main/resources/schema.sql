@@ -51,28 +51,46 @@ CREATE TYPE employment_type_enum AS ENUM (
 
 -- Create work mode enum
 CREATE TYPE work_mode_enum AS ENUM (
+    'ONSITE',
     'REMOTE',
-    'HYBRID',
-    'ON_SITE'
+    'HYBRID'
     );
 
 -- Create experience level enum
 CREATE TYPE experience_level_enum AS ENUM (
     'ENTRY',
     'JUNIOR',
-    'MID',
+    'MID_LEVEL',
     'SENIOR',
     'LEAD',
-    'PRINCIPAL'
+    'EXECUTIVE'
     );
 
 -- Create vacancy status enum
 CREATE TYPE vacancy_status_enum AS ENUM (
     'OPEN',
     'CLOSED',
-    'ON_HOLD',
-    'FILLED'
+    'PENDING'
     );
+
+-- Create type for degree_type
+CREATE TYPE degree_type_enum AS ENUM (
+    'Associate',
+    'Bachelor',
+    'Master',
+    'Doctorate',
+    'Certificate',
+    'Bootcamp',
+    'Other'
+    );
+
+-- Create type for gender enum
+CREATE TYPE gender_enum AS ENUM (
+    'MALE',
+    'FEMALE',
+    'NOT_SPECIFIED'
+    );
+
 
 CREATE TABLE vacancy (
                          id SERIAL PRIMARY KEY,
@@ -162,11 +180,6 @@ VALUES ('MALE'),
 COMMENT ON TABLE gender IS 'Table to store gender types.';
 COMMENT ON COLUMN gender.gender_type IS 'The gender of the person (e.g., MALE, FEMALE).';
 
--- Create type for gender enum
-CREATE TYPE gender_enum AS ENUM (
-    'MALE',
-    'FEMALE'
-    );
 
 -- Resume Work Experience Table
 CREATE TABLE work_experience
@@ -222,16 +235,6 @@ COMMENT ON COLUMN education.enrollment_date IS 'Start date of education.';
 COMMENT ON COLUMN education.graduation_date IS 'End date of education.';
 COMMENT ON COLUMN education.resume_id IS 'ID of the associated resume.';
 
--- Create type for degree_type
-CREATE TYPE degree_type_enum AS ENUM (
-    'Associate',
-    'Bachelor',
-    'Master',
-    'Doctorate',
-    'Certificate',
-    'Bootcamp',
-    'Other'
-    );
 
 
 -- Resume Skills Table
