@@ -30,6 +30,7 @@ public class Document {
     @Column(name = "filename")
     private String fileName;
 
+    @Lob
     @Column(name = "content")
     private String content;
 

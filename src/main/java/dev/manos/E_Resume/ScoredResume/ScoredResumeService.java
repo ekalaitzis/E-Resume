@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.PropertyValues;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -115,4 +116,42 @@ public class ScoredResumeService {
         });
     }
 
+    public void giveScoreToVacancy(Long vacancyId) {
+        List<Resume> resumesForVacancy = resumeRepository.findAllByVacancyId(vacancyId, Pageable.unpaged()).getContent();
+
+        for (Resume resume : resumesForVacancy) {
+            giveScore(Optional.of(resume));
+        }
+    }
+
+    public Page<ScoredResumeDTO> listScoredResumeAsDTOByVacancy(Long vacancyId, Pageable pageable) {
+        // 1. Get all Resume IDs that belong to this vacancy
+        List<Long> resumeIds = resumeRepository.findAllByVacancyId(vacancyId, Pageable.unpaged())
+                .stream()
+                .map(Resume::getId)
+                .toList();
+
+        if (resumeIds.isEmpty()) {
+            return Page.empty(pageable);
+        }
+
+        return scoredResumeRepository.findByIdIn(resumeIds, pageable)
+                .map(scoredResume -> {
+                    Optional<Resume> resume = resumeRepository.findById(scoredResume.getId());
+                    return resume.map(r -> ScoredResumeDTO.fromEntity(scoredResume, r)).orElse(null);
+                });
+    }
+
+
+    public void deleteAllScoredResumesByVacancy(Long vacancyId) {
+        List<Long> resumeIds = resumeRepository.findAllByVacancyId(vacancyId, Pageable.unpaged())
+                .stream()
+                .map(Resume::getId)
+                .toList();
+
+        if (!resumeIds.isEmpty()) {
+            List<ScoredResume> scoresToDelete = scoredResumeRepository.findAllById(resumeIds);
+            scoredResumeRepository.deleteAll(scoresToDelete);
+        }
+    }
 }

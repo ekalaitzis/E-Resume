@@ -1,5 +1,6 @@
 package dev.manos.E_Resume.views.resume;
 
+import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.UI;
@@ -27,6 +28,7 @@ import dev.manos.E_Resume.Volunteer.VolunteerService;
 import dev.manos.E_Resume.Volunteer.VolunteerWorkDTO;
 import dev.manos.E_Resume.WorkExperience.WorkExperienceDTO;
 import dev.manos.E_Resume.WorkExperience.WorkExperienceService;
+import dev.manos.E_Resume.events.VacancySelectedEvent;
 import dev.manos.E_Resume.views.MainLayout;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,16 +61,20 @@ public class ResumeView extends Composite<VerticalLayout> {
     @Getter
     private Grid<ResumeDTO> resumeGrid;
 
+    private Grid<EducationDTO> educationDTOGrid;
+    private Grid<WorkExperienceDTO> workExperienceDTOGrid;
+    private Grid<VolunteerWorkDTO> volunteerWorkDTOGrid;
+    private Grid<ProjectDTO> projectDTOGrid;
+    private Grid<CertificationDTO> certificationDTOGrid;
 
     public ResumeView(VacancyService vacancyService) {
-        this.vacancyService= vacancyService;
+        this.vacancyService = vacancyService;
         VerticalLayout card = new VerticalLayout();
         card.setPadding(false);
 
         // Create header section
         H1 header = new H1();
         header.getStyle().set("margin", "0").set("padding", "var(--lumo-space-m) var(--lumo-space-m) 0");
-
 
         HorizontalLayout horizontalLayoutResume = new HorizontalLayout();
         horizontalLayoutResume.setWidth("100%");
@@ -88,13 +94,14 @@ public class ResumeView extends Composite<VerticalLayout> {
         horizontalLayoutWith3Grids.setSpacing(true);
         horizontalLayoutWith3Grids.setPadding(false);
 
-        Grid<EducationDTO> educationDTOGrid = new Grid<>(EducationDTO.class, false);
-        Grid<WorkExperienceDTO> workExperienceDTOGrid = new Grid<>(WorkExperienceDTO.class, false);
+        educationDTOGrid = new Grid<>(EducationDTO.class, false);
+        workExperienceDTOGrid = new Grid<>(WorkExperienceDTO.class, false);
         workExperienceDTOGrid.addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_WRAP_CELL_CONTENT);
-        Grid<VolunteerWorkDTO> volunteerWorkDTOGrid = new Grid<>(VolunteerWorkDTO.class, false);
-        Grid<ProjectDTO> projectDTOGrid = new Grid<>(ProjectDTO.class, false);
-        Grid<CertificationDTO> certificationDTOGrid = new Grid<>(CertificationDTO.class, false);
+        volunteerWorkDTOGrid = new Grid<>(VolunteerWorkDTO.class, false);
+        projectDTOGrid = new Grid<>(ProjectDTO.class, false);
+        certificationDTOGrid = new Grid<>(CertificationDTO.class, false);
 
+        // 2. CONFIGURE THEM
         configureGrid(educationDTOGrid);
         configureGrid(workExperienceDTOGrid);
         configureGrid(volunteerWorkDTOGrid);
@@ -107,6 +114,7 @@ public class ResumeView extends Composite<VerticalLayout> {
         configureProjectGrid(projectDTOGrid);
         configureCertificationGrid(certificationDTOGrid);
 
+        // 3. SET HEIGHTS
         resumeGrid.setHeight("500px");
         educationDTOGrid.setHeight("300px");
         workExperienceDTOGrid.setHeight("300px");
@@ -114,6 +122,7 @@ public class ResumeView extends Composite<VerticalLayout> {
         projectDTOGrid.setHeight("300px");
         certificationDTOGrid.setHeight("300px");
 
+        // 4. ADD TO LAYOUTS
         horizontalLayoutResume.add(resumeGrid);
         horizontalLayoutWith2Grids.add(educationDTOGrid, workExperienceDTOGrid);
         horizontalLayoutWith3Grids.add(projectDTOGrid, certificationDTOGrid, volunteerWorkDTOGrid);
@@ -125,6 +134,7 @@ public class ResumeView extends Composite<VerticalLayout> {
         horizontalLayoutWith3Grids.setFlexGrow(1, projectDTOGrid);
         horizontalLayoutWith3Grids.setFlexGrow(1, certificationDTOGrid);
 
+        // 5. ROW SELECTION LOGIC
         resumeGrid.addSelectionListener(selection -> {
             Optional<ResumeDTO> optionalResume = selection.getFirstSelectedItem();
             if (optionalResume.isPresent()) {
@@ -136,6 +146,10 @@ public class ResumeView extends Composite<VerticalLayout> {
                 certificationDTOGrid.setItems(certificationService.listCertificationAsDTO(selectedResume.getId()));
             } else {
                 educationDTOGrid.setItems(Collections.emptyList());
+                workExperienceDTOGrid.setItems(Collections.emptyList());
+                projectDTOGrid.setItems(Collections.emptyList());
+                volunteerWorkDTOGrid.setItems(Collections.emptyList());
+                certificationDTOGrid.setItems(Collections.emptyList());
             }
         });
 
@@ -149,17 +163,41 @@ public class ResumeView extends Composite<VerticalLayout> {
         layout.setSizeFull();
     }
 
-    private void setGridSampleData(Grid<ResumeDTO> grid) {
-        Long vacancyId = (Long) ComponentUtil.getData(UI.getCurrent(), "selectedVacancyId");
+    @Override
+    protected void onAttach(AttachEvent attachEvent) {
+        super.onAttach(attachEvent);
+        ComponentUtil.addListener(attachEvent.getUI(), VacancySelectedEvent.class, event -> {
+            if (resumeGrid != null && resumeGrid.getDataProvider() != null) {
+                resumeGrid.deselectAll();
+                resumeGrid.getDataProvider().refreshAll();
 
-        grid.setItems(query -> resumeService.listResumesAsDTO(
-                vacancyId,
-                PageRequest.of(
-                        query.getPage(),
-                        query.getPageSize(),
-                        VaadinSpringDataHelpers.toSpringDataSort(query)
-                )
-        ).stream());
+                educationDTOGrid.setItems(Collections.emptyList());
+                workExperienceDTOGrid.setItems(Collections.emptyList());
+                projectDTOGrid.setItems(Collections.emptyList());
+                volunteerWorkDTOGrid.setItems(Collections.emptyList());
+                certificationDTOGrid.setItems(Collections.emptyList());
+            }
+        });
+    }
+
+    private void setGridSampleData(Grid<ResumeDTO> grid) {
+        grid.setItems(query -> {
+            Long vacancyId = (Long) ComponentUtil.getData(UI.getCurrent(), "selectedVacancyId");
+
+            if (vacancyId == null) {
+                query.getPage();
+                return java.util.stream.Stream.empty();
+            }
+
+            return resumeService.listResumesAsDTO(
+                    vacancyId,
+                    PageRequest.of(
+                            query.getPage(),
+                            query.getPageSize(),
+                            VaadinSpringDataHelpers.toSpringDataSort(query)
+                    )
+            ).stream();
+        });
     }
 
     private void configureResumeGrid(Grid<ResumeDTO> grid) {
@@ -181,6 +219,7 @@ public class ResumeView extends Composite<VerticalLayout> {
     private void configureGrid(Grid<?> grid) {
         grid.addClassName("styled-grid");
         grid.setHeight("200px");
+        grid.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT);
     }
 
     private void configureEducationGrid(Grid<EducationDTO> grid) {

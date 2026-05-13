@@ -1,7 +1,9 @@
 package dev.manos.E_Resume.views.scored;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.Composite;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
@@ -51,7 +53,6 @@ public class ScoredView extends Composite<VerticalLayout> {
         this.grid = createGrid();
         configureGrid();
 
-        // Create clear button
         Button clearButton = createClearButton();
 
         Button scoreButton = new Button();
@@ -60,20 +61,25 @@ public class ScoredView extends Composite<VerticalLayout> {
         scoreButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
         scoreButton.addClickListener(e -> {
+            Long vacancyId = (Long) ComponentUtil.getData(UI.getCurrent(), "selectedVacancyId");
+
+            if (vacancyId == null) {
+                Notification.show("Please select a vacancy first", 3000, Notification.Position.TOP_CENTER);
+                return;
+            }
             ConfirmDialog dialog = new ConfirmDialog();
             dialog.setHeader("Confirm Score");
-            dialog.setText("Are you sure you want to rate all resumes?");
+            dialog.setText("Are you sure you want to rate all resumes for this vacancy?");
             dialog.setCancelable(true);
             dialog.setConfirmText("Yes");
-            dialog.setConfirmButtonTheme("error primary");
             dialog.setConfirmButtonTheme("primary");
             dialog.addConfirmListener(event -> {
                 try {
-                    scoredResumeService.giveScoreToAll();
+                    scoredResumeService.giveScoreToVacancy(vacancyId);
                     grid.getDataProvider().refreshAll();
-                    Notification.show("All resumes have been given a rating", 3000, Notification.Position.TOP_CENTER);
+                    Notification.show("Resumes for the selected vacancy have been rated", 3000, Notification.Position.TOP_CENTER);
                 } catch (Exception ex) {
-                    Notification.show("Failed to rate all resumes: " + ex.getMessage(), 3000, Notification.Position.TOP_CENTER).addThemeVariants(NotificationVariant.LUMO_ERROR);
+                    Notification.show("Failed to rate resumes: " + ex.getMessage(), 3000, Notification.Position.TOP_CENTER).addThemeVariants(NotificationVariant.LUMO_ERROR);
                 }
             });
             dialog.open();
@@ -95,7 +101,7 @@ public class ScoredView extends Composite<VerticalLayout> {
 
         StreamResource editIconResource2 = new StreamResource("slider.svg", () -> getClass().getResourceAsStream("/icons/slider.svg"));
         SvgIcon sliderIcon = new SvgIcon(editIconResource2);
-        sliderIcon.setSize("1.2em");  // Slightly increase edit icon size for consistency
+        sliderIcon.setSize("1.2em");
         Button sliderDialog = new Button(sliderIcon , e -> dialog.open());
         sliderDialog.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ICON);
 
@@ -103,7 +109,6 @@ public class ScoredView extends Composite<VerticalLayout> {
         buttonLayout.setWidthFull();
         buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
 
-// Create left side button group
         HorizontalLayout leftButtons = new HorizontalLayout(scoreButton, sliderDialog);
         leftButtons.setSpacing(true);
         buttonLayout.add(leftButtons, clearButton);
@@ -206,7 +211,6 @@ public class ScoredView extends Composite<VerticalLayout> {
                 .setHeader("Name")
                 .setSortable(true);
 
-        // Format numeric columns using NumberRenderer
         Grid.Column<ScoredResumeDTO> totalScoreColumn = grid.addColumn(new NumberRenderer<>(
                         ScoredResumeDTO::getTotalScore,
                         "%.0f"))
@@ -215,11 +219,11 @@ public class ScoredView extends Composite<VerticalLayout> {
                 .setKey("totalScore")
                 .setTextAlign(ColumnTextAlign.END);
 
-        grid.addColumn(new NumberRenderer<>(
-                        ScoredResumeDTO::getWorkExperienceScore,
-                        "%.0f"))
+        grid.addColumn(new NumberRenderer<>(ScoredResumeDTO::getWorkExperienceScore, "%.0f"))
                 .setHeader("Work experience")
                 .setSortable(true)
+                .setKey("workExperienceScore")
+                .setClassNameGenerator(item -> "numeric-cell")
                 .setTextAlign(ColumnTextAlign.END);
 
         grid.addColumn(new NumberRenderer<>(
@@ -227,6 +231,7 @@ public class ScoredView extends Composite<VerticalLayout> {
                         "%.0f"))
                 .setHeader("Education")
                 .setSortable(true)
+                .setKey("educationScore")
                 .setTextAlign(ColumnTextAlign.END);
 
         grid.addColumn(new NumberRenderer<>(
@@ -234,6 +239,7 @@ public class ScoredView extends Composite<VerticalLayout> {
                         "%.0f"))
                 .setHeader("Projects")
                 .setSortable(true)
+                .setKey("projectsScore")
                 .setTextAlign(ColumnTextAlign.END);
 
         grid.addColumn(new NumberRenderer<>(
@@ -241,6 +247,7 @@ public class ScoredView extends Composite<VerticalLayout> {
                         "%.0f"))
                 .setHeader("Volunteer Work")
                 .setSortable(true)
+                .setKey("volunteerWorkScore")
                 .setTextAlign(ColumnTextAlign.END);
 
         grid.addColumn(new NumberRenderer<>(
@@ -248,6 +255,7 @@ public class ScoredView extends Composite<VerticalLayout> {
                         "%.0f"))
                 .setHeader("Certifications")
                 .setSortable(true)
+                .setKey("certificationsAndCoursesScore")
                 .setTextAlign(ColumnTextAlign.END);
 
         grid.addColumn(new NumberRenderer<>(
@@ -255,6 +263,7 @@ public class ScoredView extends Composite<VerticalLayout> {
                         "%.0f"))
                 .setHeader("Skills")
                 .setSortable(true)
+                .setKey("skillsScore")
                 .setTextAlign(ColumnTextAlign.END);
 
         grid.addColumn(new NumberRenderer<>(
@@ -262,6 +271,7 @@ public class ScoredView extends Composite<VerticalLayout> {
                         "%.0f"))
                 .setHeader("Languages")
                 .setSortable(true)
+                .setKey("languagesScore")
                 .setTextAlign(ColumnTextAlign.END);
 
         GridSortOrder<ScoredResumeDTO> order = new GridSortOrder<>(totalScoreColumn, SortDirection.DESCENDING);
@@ -273,11 +283,21 @@ public class ScoredView extends Composite<VerticalLayout> {
 
     private void setGridData() {
         grid.setItems(query -> {
+            Long vacancyId = (Long) ComponentUtil.getData(UI.getCurrent(), "selectedVacancyId");
+
+            if (vacancyId == null) {
+                query.getPage();
+
+                return java.util.stream.Stream.empty();
+            }
+
             Sort defaultSort = Sort.by(Sort.Direction.DESC, "totalScore");
-            // If there's a user-specified sort, use that instead
             Sort sort = query.getSortOrders().isEmpty() ? defaultSort : VaadinSpringDataHelpers.toSpringDataSort(query);
 
-            return scoredResumeService.listScoredResumeAsDTO(PageRequest.of(query.getPage(), query.getPageSize(), sort)).stream();
+            return scoredResumeService.listScoredResumeAsDTOByVacancy(
+                    vacancyId,
+                    PageRequest.of(query.getPage(), query.getPageSize(), sort)
+            ).stream();
         });
     }
 

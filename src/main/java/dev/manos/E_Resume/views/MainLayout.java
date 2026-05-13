@@ -1,6 +1,7 @@
 package dev.manos.E_Resume.views;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -53,19 +54,16 @@ public class MainLayout extends HorizontalLayout implements RouterLayout {
         setSpacing(false);
         setPadding(false);
 
-        // Create the main card that will contain everything
         VerticalLayout mainCard = new VerticalLayout();
         mainCard.addClassName("content-card");
         mainCard.getStyle().set("background-color", "rgba(255, 255, 255, 0.8)").set("margin", "20px").set("box-sizing", "border-box").set("width", "calc(100% - 40px)") // Adjust margins on both sides
-                .set("height", "calc(100% - 40px)"); // Adjust margins on top and bottom
+                .set("height", "calc(100% - 40px)");
 
-        // Create horizontal layout to hold sidebar and content
         HorizontalLayout contentWrapper = new HorizontalLayout();
         contentWrapper.setSizeFull();
         contentWrapper.setSpacing(false);
         contentWrapper.setPadding(false);
 
-        // Create left container for sidebar
         VerticalLayout leftContainer = new VerticalLayout();
         leftContainer.setSpacing(false);
         leftContainer.setPadding(false);
@@ -73,23 +71,18 @@ public class MainLayout extends HorizontalLayout implements RouterLayout {
         leftContainer.setHeight("100%");
         leftContainer.getStyle().set("margin", "0").set("gap", "0").set("border-right", "1px solid var(--lumo-contrast-10pct)"); // Add separator
 
-        // Add components to the left container
         VerticalLayout sidebar = createSidebar();
         leftContainer.add(sidebar);
 
-        // Setup content container
         contentContainer = new VerticalLayout();
         contentContainer.setSizeFull();
         contentContainer.setPadding(true);
         contentContainer.setSpacing(false);
 
-        // Add everything to the wrapper
         contentWrapper.add(leftContainer, contentContainer);
 
-        // Add the wrapper to the main card
         mainCard.add(contentWrapper);
 
-        // Add the main card to the layout
         add(mainCard);
     }
 
@@ -119,7 +112,7 @@ public class MainLayout extends HorizontalLayout implements RouterLayout {
         TextField location = new TextField("Location");
         TextField salaryRange = new TextField("Salary");
         TextArea description = new TextArea("Description");
-        description.getStyle().set("background-color", "transparent"); // This removes the white background
+        description.getStyle().set("background-color", "transparent");
 
 
         VerticalLayout dialogLayout = new VerticalLayout(vacancyName, employmentType, workMode, experienceLevel, status, location, salaryRange, description);
@@ -135,94 +128,99 @@ public class MainLayout extends HorizontalLayout implements RouterLayout {
         VerticalLayout sidebar = new VerticalLayout();
         sidebar.addClassName("sidebar");
 
-
-        // Create vacancy grid
         vacancyGrid = new Grid<>(VacancyDTO.class, false);
         configureVacancyGrid(vacancyGrid);
         setVacancyGridSampleData(vacancyGrid);
 
         vacancyGrid.addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_WRAP_CELL_CONTENT, GridVariant.LUMO_NO_BORDER);
 
+        vacancyGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
+        vacancyGrid.addSelectionListener(event -> {
+            event.getFirstSelectedItem().ifPresent(selectedVacancy -> {
+                com.vaadin.flow.component.ComponentUtil.setData(UI.getCurrent(), "selectedVacancyId", selectedVacancy.getId());
+
+                com.vaadin.flow.component.ComponentUtil.fireEvent(
+                        UI.getCurrent(),
+                        new dev.manos.E_Resume.events.VacancySelectedEvent(UI.getCurrent(), false, selectedVacancy.getId())
+                );
+            });
+        });
+
         vacancyGrid.setClassNameGenerator(item -> {
             vacancyGrid.getStyle().set("--vaadin-grid-cell-background", "transparent");
             return "";
         });
 
-        vacancyGrid.getStyle().set("background-color", "rgba(255, 255, 255, 0)");
-
-        sidebar.getStyle().set("background", "rgba(0, 0, 0, 0.8)").set("padding", "0").set("margin", "0").set("box-sizing", "border-box").set("z-index", "1");
+        sidebar.getStyle().set("background", "rgba(0, 0, 0, 0.8)")
+                .set("padding", "0")
+                .set("margin", "0")
+                .set("box-sizing", "border-box")
+                .set("z-index", "1");
 
         sidebar.add(vacancyGrid);
-        sidebar.setWidth("350px"); // Wider to accommodate the grid
+        sidebar.setWidth("350px");
         sidebar.setHeightFull();
         return sidebar;
     }
 
     private Button createAddButton(Dialog dialog, VerticalLayout dialogLayout) {
     // --- DEMO VERSION CODE ---
-//        Button addButton = new Button("Add", e -> {
-//            Notification.show(
-//                    "Adding new vacancies is disabled in the demo version of the website.",
-//                    5000,
-//                    Notification.Position.TOP_CENTER
-//            );
-//            dialog.close();
-//        });
-//
-//        addButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-//        return addButton;
-
-        // --- ORIGINAL PRODUCTION CODE (Commented out for easy swapping) ---
-
-
         Button addButton = new Button("Add", e -> {
-            try {
-                // Extract values from form fields
-                String vacancyName = ((TextField) dialogLayout.getChildren().filter(component -> component instanceof TextField && "Vacancy name".equals(((TextField) component).getLabel())).findFirst().orElseThrow()).getValue();
-
-                EmploymentType employmentType = (EmploymentType) ((ComboBox<?>) dialogLayout.getChildren().filter(component -> component instanceof ComboBox && "Employment type".equals(((ComboBox<?>) component).getLabel())).findFirst().orElseThrow()).getValue();
-
-                WorkMode workMode = (WorkMode) ((ComboBox<?>) dialogLayout.getChildren().filter(component -> component instanceof ComboBox && "Work mode".equals(((ComboBox<?>) component).getLabel())).findFirst().orElseThrow()).getValue();
-
-                ExperienceLevel experienceLevel = (ExperienceLevel) ((ComboBox<?>) dialogLayout.getChildren().filter(component -> component instanceof ComboBox && "Experience level ".equals(((ComboBox<?>) component).getLabel())).findFirst().orElseThrow()).getValue();
-
-                VacancyStatus status = (VacancyStatus) ((ComboBox<?>) dialogLayout.getChildren().filter(component -> component instanceof ComboBox && "Status".equals(((ComboBox<?>) component).getLabel())).findFirst().orElseThrow()).getValue();
-
-                String location = ((TextField) dialogLayout.getChildren().filter(component -> component instanceof TextField && "Location".equals(((TextField) component).getLabel())).findFirst().orElseThrow()).getValue();
-
-                String salaryRange = ((TextField) dialogLayout.getChildren().filter(component -> component instanceof TextField && "Salary".equals(((TextField) component).getLabel())).findFirst().orElseThrow()).getValue();
-
-                String description = ((TextArea) dialogLayout.getChildren().filter(component -> component instanceof TextArea && "Description".equals(((TextArea) component).getLabel())).findFirst().orElseThrow()).getValue();
-
-                // Create vacancy object
-                Vacancy vacancy = new Vacancy();
-                vacancy.setVacancyName(vacancyName);
-                vacancy.setEmploymentType(employmentType);
-                vacancy.setWorkMode(workMode);
-                vacancy.setExperienceLevel(experienceLevel);
-                vacancy.setStatus(status);
-                vacancy.setLocation(location);
-                vacancy.setSalaryRange(salaryRange);
-                vacancy.setDescription(description);
-
-                // Save vacancy using service
-                vacancyService.createVacancy(vacancy);
-                // Show success notification
-                Notification.show("Vacancy created successfully!", 3000, Notification.Position.TOP_CENTER);
-                // Refresh the grid
-                refreshGrid();
-                // Clear the fields and close dialog
-                clearDialogFields(dialogLayout);
-                dialog.close();
-
-            } catch (Exception ex) {
-                // Show error notification
-                Notification.show("Error creating vacancy: " + ex.getMessage(), 3000, Notification.Position.TOP_CENTER).addThemeVariants(NotificationVariant.LUMO_ERROR);
-            }
+            Notification.show(
+                    "Adding new vacancies is disabled in the demo version of the website.",
+                    5000,
+                    Notification.Position.TOP_CENTER
+            );
+            dialog.close();
         });
 
         addButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         return addButton;
+
+        // --- ORIGINAL PRODUCTION CODE (Commented out for easy swapping) ---
+
+
+//        Button addButton = new Button("Add", e -> {
+//            try {
+//                String vacancyName = ((TextField) dialogLayout.getChildren().filter(component -> component instanceof TextField && "Vacancy name".equals(((TextField) component).getLabel())).findFirst().orElseThrow()).getValue();
+//
+//                EmploymentType employmentType = (EmploymentType) ((ComboBox<?>) dialogLayout.getChildren().filter(component -> component instanceof ComboBox && "Employment type".equals(((ComboBox<?>) component).getLabel())).findFirst().orElseThrow()).getValue();
+//
+//                WorkMode workMode = (WorkMode) ((ComboBox<?>) dialogLayout.getChildren().filter(component -> component instanceof ComboBox && "Work mode".equals(((ComboBox<?>) component).getLabel())).findFirst().orElseThrow()).getValue();
+//
+//                ExperienceLevel experienceLevel = (ExperienceLevel) ((ComboBox<?>) dialogLayout.getChildren().filter(component -> component instanceof ComboBox && "Experience level ".equals(((ComboBox<?>) component).getLabel())).findFirst().orElseThrow()).getValue();
+//
+//                VacancyStatus status = (VacancyStatus) ((ComboBox<?>) dialogLayout.getChildren().filter(component -> component instanceof ComboBox && "Status".equals(((ComboBox<?>) component).getLabel())).findFirst().orElseThrow()).getValue();
+//
+//                String location = ((TextField) dialogLayout.getChildren().filter(component -> component instanceof TextField && "Location".equals(((TextField) component).getLabel())).findFirst().orElseThrow()).getValue();
+//
+//                String salaryRange = ((TextField) dialogLayout.getChildren().filter(component -> component instanceof TextField && "Salary".equals(((TextField) component).getLabel())).findFirst().orElseThrow()).getValue();
+//
+//                String description = ((TextArea) dialogLayout.getChildren().filter(component -> component instanceof TextArea && "Description".equals(((TextArea) component).getLabel())).findFirst().orElseThrow()).getValue();
+//
+//                Vacancy vacancy = new Vacancy();
+//                vacancy.setVacancyName(vacancyName);
+//                vacancy.setEmploymentType(employmentType);
+//                vacancy.setWorkMode(workMode);
+//                vacancy.setExperienceLevel(experienceLevel);
+//                vacancy.setStatus(status);
+//                vacancy.setLocation(location);
+//                vacancy.setSalaryRange(salaryRange);
+//                vacancy.setDescription(description);
+//
+//                vacancyService.createVacancy(vacancy);
+//                Notification.show("Vacancy created successfully!", 3000, Notification.Position.TOP_CENTER);
+//                refreshGrid();
+//                clearDialogFields(dialogLayout);
+//                dialog.close();
+//
+//            } catch (Exception ex) {
+//                Notification.show("Error creating vacancy: " + ex.getMessage(), 3000, Notification.Position.TOP_CENTER).addThemeVariants(NotificationVariant.LUMO_ERROR);
+//            }
+//        });
+//
+//        addButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+//        return addButton;
     }
 
     private void clearDialogFields(VerticalLayout dialogLayout) {
@@ -250,18 +248,15 @@ public class MainLayout extends HorizontalLayout implements RouterLayout {
     private void configureVacancyGrid(Grid<VacancyDTO> grid) {
         grid.addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_WRAP_CELL_CONTENT);
 
-        // Header row with title and add button
         HeaderRow headerRow = grid.prependHeaderRow();
 
-        // Create the add button with larger icon
         Button addVacancyButton = new Button();
         StreamResource plusIconResource = new StreamResource("plus.svg", () -> getClass().getResourceAsStream("/icons/plus.svg"));
         SvgIcon plusIcon = new SvgIcon(plusIconResource);
-        plusIcon.setSize("1.5em");  // Increase icon size
+        plusIcon.setSize("1.5em");
         addVacancyButton.setIcon(plusIcon);
         addVacancyButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ICON);
 
-        // Create the dialog for adding new vacancy
         Dialog dialog = new Dialog();
         dialog.setHeaderTitle("Add new vacancy");
         VerticalLayout dialogLayout = createDialogLayout();
@@ -281,32 +276,28 @@ public class MainLayout extends HorizontalLayout implements RouterLayout {
             dialog.open();
         });
 
-        // Create styled header text
         H3 headerText = new H3("Vacancies");
         headerText.getStyle().set("font-family", "Roboto, sans-serif").set("font-weight", "bold").set("margin", "0");  // Remove default margins
 
-        // Add the vacancy name column with styled header
         Grid.Column<VacancyDTO> nameColumn = grid.addColumn(VacancyDTO::getVacancyName).setHeader(headerText).setAutoWidth(true);
 
-        // Add edit button column
         Grid.Column<VacancyDTO> editColumn = grid.addComponentColumn(vacancy -> {
             StreamResource editIconResource = new StreamResource("edit.svg", () -> getClass().getResourceAsStream("/icons/edit.svg"));
             SvgIcon editIcon = new SvgIcon(editIconResource);
-            editIcon.setSize("1.2em");  // Slightly increase edit icon size for consistency
+            editIcon.setSize("1.2em");
             Button editButton = new Button(editIcon);
             editButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ICON);
             editButton.addClickListener(e -> openEditDialog(vacancy));
             return editButton;
-        }).setWidth("3em").setFlexGrow(0);  // Adjusted width as requested
+        }).setWidth("3em").setFlexGrow(0);
         editColumn.setAutoWidth(true)
                 .setTextAlign(ColumnTextAlign.CENTER)
                 .setFlexGrow(0);
-        // Create header layout for the edit column with just the add button
+
         HorizontalLayout editHeaderLayout = new HorizontalLayout(addVacancyButton);
         editHeaderLayout.setJustifyContentMode(JustifyContentMode.CENTER);
         editHeaderLayout.setWidth("100%");
 
-        // Set the add button in the header above the edit column
         headerRow.getCell(editColumn).setComponent(editHeaderLayout);
     }
 
@@ -318,7 +309,6 @@ public class MainLayout extends HorizontalLayout implements RouterLayout {
         VerticalLayout dialogLayout = createDialogLayout();
         dialog.add(dialogLayout);
 
-        // Pre-fill form fields
         dialogLayout.getChildren().forEach(component -> {
             if (component instanceof TextField field) {
                 switch (field.getLabel()) {
@@ -374,33 +364,24 @@ public class MainLayout extends HorizontalLayout implements RouterLayout {
     }
 
     private void confirmDelete(Optional<Vacancy> vacancy) {
+        if (vacancy.isEmpty()) {
+            Notification.show("Error: Vacancy not found", 3000, Notification.Position.TOP_CENTER);
+            return;
+        }
         Dialog deleteDialog = new Dialog();
-
         deleteDialog.setHeaderTitle(String.format("Delete vacancy \"%s\"?", vacancy.get().getVacancyName()));
         deleteDialog.add("Are you sure you want to delete this vacancy permanently?");
 
         // --- DEMO VERSION CODE ---
-//        Button permdDeleteButton = new Button("Delete", (e) -> {
-//            Notification.show(
-//                    "Deleting data is disabled in the demo version of the website.",
-//                    5000,
-//                    Notification.Position.TOP_CENTER
-//            );
-//            deleteDialog.close();
-//        });
-//
-//        permdDeleteButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
-//        permdDeleteButton.getStyle().set("margin-right", "auto");
-//        deleteDialog.getFooter().add(permdDeleteButton);
-
-
-        // --- ORIGINAL PRODUCTION CODE (Commented out for easy swapping) ---
-
         Button permdDeleteButton = new Button("Delete", (e) -> {
-            deleteVacancy(vacancy.get().getId());
-            refreshGrid();
+            Notification.show(
+                    "Deleting data is disabled in the demo version of the website.",
+                    5000,
+                    Notification.Position.TOP_CENTER
+            );
             deleteDialog.close();
         });
+
         permdDeleteButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
         permdDeleteButton.getStyle().set("margin-right", "auto");
         deleteDialog.getFooter().add(permdDeleteButton);
@@ -408,72 +389,89 @@ public class MainLayout extends HorizontalLayout implements RouterLayout {
         Button cancel2Button = new Button("Cancel", (e) -> deleteDialog.close());
         cancel2Button.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         deleteDialog.getFooter().add(cancel2Button);
+
+
+        // --- ORIGINAL PRODUCTION CODE (Commented out for easy swapping) ---
+    /*
+    Button permdDeleteButton = new Button("Delete", (e) -> {
+        deleteVacancy(vacancy.get().getId());
+        refreshGrid();
+        Notification.show("Vacancy deleted successfully", 3000, Notification.Position.TOP_CENTER);
+        deleteDialog.close();
+    });
+    permdDeleteButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
+    permdDeleteButton.getStyle().set("margin-right", "auto");
+    deleteDialog.getFooter().add(permdDeleteButton);
+
+    Button cancel2Button = new Button("Cancel", (e) -> deleteDialog.close());
+    cancel2Button.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+    deleteDialog.getFooter().add(cancel2Button);
+    */
+
+        // This makes the dialog actually appear on screen
         deleteDialog.open();
     }
 
     private Button createSaveButton(Dialog dialog, VerticalLayout dialogLayout, Long vacancyId) {
         // --- DEMO VERSION CODE ---
-//        Button saveButton = new Button("Save", e -> {
-//            Notification.show(
-//                    "Modifying data is disabled in the demo version of the website.",
-//                    5000,
-//                    Notification.Position.TOP_CENTER
-//            );
-//            dialog.close();
-//        });
-//
-//        saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-//        return saveButton;
-
-        // --- ORIGINAL PRODUCTION CODE (Commented out for easy swapping) ---
-
-
         Button saveButton = new Button("Save", e -> {
-            try {
-                // Extract form values as before
-                // Create vacancy object
-                String vacancyName = ((TextField) dialogLayout.getChildren().filter(component -> component instanceof TextField && "Vacancy name".equals(((TextField) component).getLabel())).findFirst().orElseThrow()).getValue();
-
-                EmploymentType employmentType = (EmploymentType) ((ComboBox<?>) dialogLayout.getChildren().filter(component -> component instanceof ComboBox && "Employment type".equals(((ComboBox<?>) component).getLabel())).findFirst().orElseThrow()).getValue();
-
-                WorkMode workMode = (WorkMode) ((ComboBox<?>) dialogLayout.getChildren().filter(component -> component instanceof ComboBox && "Work mode".equals(((ComboBox<?>) component).getLabel())).findFirst().orElseThrow()).getValue();
-
-                ExperienceLevel experienceLevel = (ExperienceLevel) ((ComboBox<?>) dialogLayout.getChildren().filter(component -> component instanceof ComboBox && "Experience level ".equals(((ComboBox<?>) component).getLabel())).findFirst().orElseThrow()).getValue();
-
-                VacancyStatus status = (VacancyStatus) ((ComboBox<?>) dialogLayout.getChildren().filter(component -> component instanceof ComboBox && "Status".equals(((ComboBox<?>) component).getLabel())).findFirst().orElseThrow()).getValue();
-
-                String location = ((TextField) dialogLayout.getChildren().filter(component -> component instanceof TextField && "Location".equals(((TextField) component).getLabel())).findFirst().orElseThrow()).getValue();
-
-                String salaryRange = ((TextField) dialogLayout.getChildren().filter(component -> component instanceof TextField && "Salary".equals(((TextField) component).getLabel())).findFirst().orElseThrow()).getValue();
-
-                String description = ((TextArea) dialogLayout.getChildren().filter(component -> component instanceof TextArea && "Description".equals(((TextArea) component).getLabel())).findFirst().orElseThrow()).getValue();
-
-                // Create vacancy object
-                Vacancy vacancy = new Vacancy();
-                vacancy.setId(vacancyId);
-                vacancy.setVacancyName(vacancyName);
-                vacancy.setEmploymentType(employmentType);
-                vacancy.setWorkMode(workMode);
-                vacancy.setExperienceLevel(experienceLevel);
-                vacancy.setStatus(status);
-                vacancy.setLocation(location);
-                vacancy.setSalaryRange(salaryRange);
-                vacancy.setDescription(description);
-                vacancy.setPostDate(LocalDate.now());
-
-                // Update instead of create
-                vacancyService.updateVacancy(vacancy);
-
-                Notification.show("Vacancy updated successfully!", 3000, Notification.Position.TOP_CENTER);
-                refreshGrid();
-                dialog.close();
-            } catch (Exception ex) {
-                Notification.show("Error updating vacancy: " + ex.getMessage(), 3000, Notification.Position.TOP_CENTER).addThemeVariants(NotificationVariant.LUMO_ERROR);
-            }
+            Notification.show(
+                    "Modifying data is disabled in the demo version of the website.",
+                    5000,
+                    Notification.Position.TOP_CENTER
+            );
+            dialog.close();
         });
 
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         return saveButton;
+
+        // --- ORIGINAL PRODUCTION CODE (Commented out for easy swapping) ---
+
+
+//        Button saveButton = new Button("Save", e -> {
+//            try {
+//
+//                String vacancyName = ((TextField) dialogLayout.getChildren().filter(component -> component instanceof TextField && "Vacancy name".equals(((TextField) component).getLabel())).findFirst().orElseThrow()).getValue();
+//
+//                EmploymentType employmentType = (EmploymentType) ((ComboBox<?>) dialogLayout.getChildren().filter(component -> component instanceof ComboBox && "Employment type".equals(((ComboBox<?>) component).getLabel())).findFirst().orElseThrow()).getValue();
+//
+//                WorkMode workMode = (WorkMode) ((ComboBox<?>) dialogLayout.getChildren().filter(component -> component instanceof ComboBox && "Work mode".equals(((ComboBox<?>) component).getLabel())).findFirst().orElseThrow()).getValue();
+//
+//                ExperienceLevel experienceLevel = (ExperienceLevel) ((ComboBox<?>) dialogLayout.getChildren().filter(component -> component instanceof ComboBox && "Experience level ".equals(((ComboBox<?>) component).getLabel())).findFirst().orElseThrow()).getValue();
+//
+//                VacancyStatus status = (VacancyStatus) ((ComboBox<?>) dialogLayout.getChildren().filter(component -> component instanceof ComboBox && "Status".equals(((ComboBox<?>) component).getLabel())).findFirst().orElseThrow()).getValue();
+//
+//                String location = ((TextField) dialogLayout.getChildren().filter(component -> component instanceof TextField && "Location".equals(((TextField) component).getLabel())).findFirst().orElseThrow()).getValue();
+//
+//                String salaryRange = ((TextField) dialogLayout.getChildren().filter(component -> component instanceof TextField && "Salary".equals(((TextField) component).getLabel())).findFirst().orElseThrow()).getValue();
+//
+//                String description = ((TextArea) dialogLayout.getChildren().filter(component -> component instanceof TextArea && "Description".equals(((TextArea) component).getLabel())).findFirst().orElseThrow()).getValue();
+//
+//                Vacancy vacancy = new Vacancy();
+//                vacancy.setId(vacancyId);
+//                vacancy.setVacancyName(vacancyName);
+//                vacancy.setEmploymentType(employmentType);
+//                vacancy.setWorkMode(workMode);
+//                vacancy.setExperienceLevel(experienceLevel);
+//                vacancy.setStatus(status);
+//                vacancy.setLocation(location);
+//                vacancy.setSalaryRange(salaryRange);
+//                vacancy.setDescription(description);
+//                vacancy.setPostDate(LocalDate.now());
+//
+//                vacancyService.updateVacancy(vacancy);
+//
+//                Notification.show("Vacancy updated successfully!", 3000, Notification.Position.TOP_CENTER);
+//                refreshGrid();
+//                dialog.close();
+//            } catch (Exception ex) {
+//                Notification.show("Error updating vacancy: " + ex.getMessage(), 3000, Notification.Position.TOP_CENTER).addThemeVariants(NotificationVariant.LUMO_ERROR);
+//            }
+//        });
+//
+//        saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+//        return saveButton;
     }
 
     @Override
@@ -515,7 +513,6 @@ public class MainLayout extends HorizontalLayout implements RouterLayout {
         tabSheet.add("Resume", new Div());
         tabSheet.add("Scored", new Div());
 
-        // Add listener to handle tab selection
         tabSheet.addSelectedChangeListener(event -> {
             int selectedIndex = tabSheet.getSelectedIndex();
             switch (selectedIndex) {
