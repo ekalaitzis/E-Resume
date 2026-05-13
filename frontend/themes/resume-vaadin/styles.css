@@ -1,4 +1,5 @@
 /* Import statements */
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
 @import url('./main-layout.css');
 @import url('./views/upload-view.css');
 @import url('./views/resume-view.css');
@@ -200,4 +201,18 @@ paper-slider {
     --paper-slider-knob-color: #2196f3;
     --paper-slider-pin-color: #2196f3;
     --paper-slider-secondary-color: #90caf9;
+}
+
+vaadin-grid-cell-content.numeric-cell {
+    display: flex;
+    justify-content: flex-end;
+    font-family: 'Roboto Mono', monospace; /* Monospace helps numbers line up */
+    padding-right: 20px !important;
+}
+
+/* Apply this class to your numeric columns in Java using .setClassNameGenerator */
+.numeric-alignment {
+    font-family: 'Roboto Mono', monospace;
+    font-variant-numeric: tabular-nums;
+    padding-right: 10% !important; /* Pushes it slightly away from the right edge for breathing room */
 }

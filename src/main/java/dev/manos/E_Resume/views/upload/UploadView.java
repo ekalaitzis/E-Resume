@@ -42,23 +42,19 @@ public class UploadView extends VerticalLayout {
         this.baseUrl = baseUrl;
         this.restClient = RestClient.builder().baseUrl(this.baseUrl).build();
 
-        // Create components
         MemoryBuffer buffer = new MemoryBuffer();
         Upload upload = createUpload(buffer);
         textArea = createTextArea();
         parseButton = createParseButton();
         clearButton = createClearButton();
 
-        // Configure components
         configureComponents(upload, buffer);
 
-        // Create button layout
         HorizontalLayout buttonLayout = new HorizontalLayout(parseButton, clearButton);
         buttonLayout.setSpacing(true);
         buttonLayout.setPadding(true);
         buttonLayout.getStyle().set("margin-top", "var(--lumo-space-m)");
 
-        // Add components directly to the view
         add(createSection(upload), createSection(textArea), buttonLayout);
     }
 
@@ -75,7 +71,7 @@ public class UploadView extends VerticalLayout {
         area.setWidthFull();
         area.setHeight("900px");
         area.setMinHeight("800px");
-        area.setMaxHeight("850px"); // Prevent auto-resizing
+        area.setMaxHeight("850px");
         return area;
     }
 
@@ -122,7 +118,6 @@ public class UploadView extends VerticalLayout {
     private String uploadFile(InputStream inputStream, String fileName) throws IOException {
         byte[] fileBytes = inputStream.readAllBytes();
 
-        // Create a MultipartFile resource
         Resource fileResource = new ByteArrayResource(fileBytes) {
             @Override
             public String getFilename() {
@@ -130,7 +125,6 @@ public class UploadView extends VerticalLayout {
             }
         };
 
-        // Create the multipart form data
         MultipartBodyBuilder builder = new MultipartBodyBuilder();
         builder.part("file", fileResource).filename(fileName).contentType(MediaType.APPLICATION_OCTET_STREAM);
 
@@ -139,32 +133,34 @@ public class UploadView extends VerticalLayout {
 
     private void parseResume() {
         // --- DEMO VERSION CODE ---
-        // Shows a toast-style notification for 5000ms (5 seconds) at the bottom center
+//         Shows a toast-style notification for 5000ms (5 seconds) at the bottom center
         Notification.show(
-                " Adding new vacancies is disabled in the demo version of the website. Parsing is not allowed in the demo version.",
+                " Adding new resumes is disabled in the demo version of the website.",
                 5000,
-                Notification.Position.BOTTOM_CENTER
+                Notification.Position.TOP_CENTER
         );
 
         // --- ORIGINAL PRODUCTION CODE (Commented out for easy swapping) ---
-        /*
-        String resumeText = textArea.getValue();
 
-        Long vacancyId = (Long) ComponentUtil.getData(UI.getCurrent(), "selectedVacancyId");
-        try {
-            String response = restClient.post()
-                    .uri("/resume/parse/{vacancyId}", vacancyId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(resumeText)
-                    .retrieve()
-                    .body(String.class);
+//        String resumeText = textArea.getValue();
+//
+//        Long vacancyId = (Long) ComponentUtil.getData(UI.getCurrent(), "selectedVacancyId");
+//        System.out.println("DEBUG: Vacancy ID is: " + vacancyId);
+//        try {
+//            String response = restClient.post()
+//                    .uri("/resume/parse/{vacancyId}", vacancyId)
+//                    .contentType(MediaType.APPLICATION_JSON)
+//                    .body(resumeText)
+//                    .retrieve()
+//                    .body(String.class);
+//
+//            Notification.show("Resume parsed successfully");
+//            System.out.println("Server Response: " + response);
+//        } catch (WebClientResponseException e) {
+//            Notification.show("Error parsing resume: " + e.getStatusCode());
+//        } catch (Exception e) {
+//            Notification.show("Unexpected error: " + e.getMessage());
+//        }
 
-            Notification.show("Resume parsed successfully");
-        } catch (WebClientResponseException e) {
-            Notification.show("Error parsing resume: " + e.getStatusCode());
-        } catch (Exception e) {
-            Notification.show("Unexpected error: " + e.getMessage());
-        }
-        */
     }
 }
